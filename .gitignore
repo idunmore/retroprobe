@@ -17,7 +17,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-# lib/ - Normally excluded for Python, but wanted for Micropython
+# lib/ - Normally excluded for Python, but wanted for Micro Python and Circuit Python
 lib64/
 parts/
 sdist/
