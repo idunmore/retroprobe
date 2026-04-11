@@ -14,7 +14,7 @@ import random
 
 # Boot Screen Display (Placeholder)
 def show_boot_screen(screen, width):
-	while True:	    
+	for _ in range(6):	    
 	    screen.fill(0)
 
 	    # Display the title
