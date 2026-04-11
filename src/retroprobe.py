@@ -10,9 +10,6 @@
 # (w/ 16MB flash memory)
 
 # Standard Modules
-import time
-import random
-import sys
 
 # Circuit Python & Adafruit Modules
 import board
@@ -20,6 +17,9 @@ import busio
 import digitalio
 import adafruit_ssd1306
 import adafruit_framebuf
+
+# Retroprobe Modules
+import boot_screen
 
 # Hardware Constants
 
@@ -35,18 +35,5 @@ I2C_SCL = board.GP13
 i2c = busio.I2C(I2C_SCL, I2C_SDA)
 screen = adafruit_ssd1306.SSD1306_I2C(SCREEN_WIDTH, SCREEN_HEIGHT, i2c)
 
-# Intro Display (Placeholder)
-while True:
-    screen.fill(0)
-
-    # Title lines
-    screen.text("RetroProbe by @Torq", 0, 0, 1)
-    screen.hline(0, 12, 128, 1)
-
-    # Display shifting binary streams
-    for line in range(5):
-        bits = [random.randint(0, 1) for _ in range(21)]
-        bit_string = ''.join(map(str, bits))
-        screen.text(bit_string, 0, 16 + (line * 10), 1)
-
-    screen.show()
+# Display the Boot Screen
+boot_screen.show_boot_screen(screen, SCREEN_WIDTH)
