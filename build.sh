@@ -42,5 +42,6 @@ cp fonts/font5x8.bin dist/font5x8.bin
 cp src/code.py dist/code.py
 mpy-cross src/retroprobe.py -o dist/retroprobe.mpy
 mpy-cross src/boot_screen.py -o dist/boot_screen.mpy
+mpy-cross src/info_screen.py -o dist/info_screen.mpy
 mpy-cross src/menu.py -o dist/menu.mpy
 exit

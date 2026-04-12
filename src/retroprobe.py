@@ -20,6 +20,7 @@ import adafruit_framebuf
 
 # Retroprobe Modules
 import boot_screen
+import info_screen
 from menu import *
 
 # Hardware Constants
@@ -44,9 +45,6 @@ def create_button(gpio_pin):
 def launch_game(name):
     return lambda: print(f"Launching {name}...")
 
-def show_credits():
-	print("Retroprobe (c) 2026 @Torq")
-	
 # Initialize Screen
 i2c = busio.I2C(I2C_SCL, I2C_SDA)
 screen = adafruit_ssd1306.SSD1306_I2C(SCREEN_WIDTH, SCREEN_HEIGHT, i2c)
@@ -79,11 +77,16 @@ coleco = Menu("ColecoVision")
 coleco.add(MenuItem("ColecoVision", launch_game("ColecoVision")))
 coleco.add(MenuItem("Coleco VCS Adapter", launch_game("Coleco VCS Adapter")))
 
+sega = Menu("SEGA")
+sega.add(MenuItem("Master System", launch_game("Master System")))
+sega.add(MenuItem("Genesis/MegaDrive", launch_game("Genesis/MegaDrive")))
+
 root = Menu("Main Menu")
 root.add(atari)
 root.add(coleco)
 root.add(intellivision)
-root.add(MenuItem("Credits", show_credits()))
+root.add(sega)
+root.add(MenuItem("Info", lambda: info_screen.show_info_screen(screen, SCREEN_WIDTH, button_select)))
 
 # Let the MenuSystem run the Menu and dispatch operations accordingly
 MenuSystem(root, screen, button_select, button_next, False).run()
