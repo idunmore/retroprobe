@@ -44,4 +44,5 @@ mpy-cross src/retroprobe.py -o dist/retroprobe.mpy
 mpy-cross src/boot_screen.py -o dist/boot_screen.mpy
 mpy-cross src/info_screen.py -o dist/info_screen.mpy
 mpy-cross src/menu.py -o dist/menu.mpy
+mpy-cross src/sprites.py -o dist/sprites.mpy
 exit
