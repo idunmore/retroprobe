@@ -184,12 +184,20 @@ class MenuSystem:
     def run(self):
         """Start the MenuSystem"""        
         self._running = True
+        show_state = True
 
         while self._running:
-            self.show()
+            # Only redraw the menu if something has changed; this improves
+            # button responsiveness
+            if show_state:
+                self.show()
+                show_state = False
+
             if not self._button_next.value:
                 self.next()
+                show_state = True
             if not self._button_select.value:
                 self.select()
+                show_state = True
 
                 
