@@ -29,7 +29,8 @@ def draw_filled_circle(screen, x, y, r, color):
             if i**2 + j**2 <= r**2:
                 screen.pixel(x + i, y + j, color)
 
-def draw_port(screen, connections, detected_pins, pin_states):
+def draw_port(screen, connections, detected_pins, pin_states,
+              show_connections = False):
     '''Draws a DB9 port, showing pins and connection state'''
     screen.fill(0)
     screen.text("Male DB9 - Front View", 0, 0, 1)
@@ -51,8 +52,30 @@ def draw_port(screen, connections, detected_pins, pin_states):
             screen.circle(x - 1, y, 7, 1)
             screen.text(str(pin), x - 3, y - 3, 1)
 
+    # Only draw connections between pins, if requested
+    if show_connections:
+        draw_connections(screen, connections)
+
     screen.text(" <[Select] to exit.>", 0, 56, 1)
     screen.show()
+
+def draw_connections(screen, connections):
+    '''Draws the connections between shorted pins'''
+    drawn_connections = set()
+    for pin_start, pin_end in connections:
+        if (pin_end, pin_start) in drawn_connections:
+            continue
+        drawn_connections.add((pin_start, pin_end))
+        x1, y1 = pin_positions[pin_start]
+        x2, y2 = pin_positions[pin_end]
+        mid_x, mid_y = (x1 + x2) // 2, (y1 + y2) // 2
+        if y1 == y2:
+            mid_y -= 10
+        else:
+            mid_x += 10 if x1 < x2 else -10
+
+        screen.line(x1, y1, mid_x, mid_y, 1)
+        screen.line(mid_x, mid_y, x2, y2, 1)
 
 def display_raw_db9(screen, width, button):
 	'''Display the raw DB9 pin activations; exit on [Select]'''
