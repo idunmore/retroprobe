@@ -77,10 +77,10 @@ def draw_connections(screen, connections):
         screen.line(x1, y1, mid_x, mid_y, 1)
         screen.line(mid_x, mid_y, x2, y2, 1)
 
-def display_raw_db9(screen, width, button):
+def display_raw_db9(screen, width, button, show_connections = False):
 	'''Display the raw DB9 pin activations; exit on [Select]'''
 	while True:
 		connections, detected_pins, pin_states = db9_port_probe.probe_connections()
-		draw_port(screen, connections, detected_pins, pin_states)
+		draw_port(screen, connections, detected_pins, pin_states, show_connections)
 		time.sleep(0.05)
 		if not button.value: break

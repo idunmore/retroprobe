@@ -82,13 +82,23 @@ sega = Menu("SEGA")
 sega.add(MenuItem("Master System", launch_game("Master System")))
 sega.add(MenuItem("Genesis/MegaDrive", launch_game("Genesis/MegaDrive")))
 
+standard = Menu("Standard DB9")
+standard.add(MenuItem("DB9 (Pins-Only)",
+				lambda:db9_display.display_raw_db9(
+			 		screen, SCREEN_WIDTH, button_select, False)))
+standard.add(MenuItem("DB9 (w/ Connections)",
+				lambda:db9_display.display_raw_db9(
+					screen, SCREEN_WIDTH, button_select, True)))
+
 root = Menu("Main Menu")
 root.add(atari)
 root.add(coleco)
 root.add(intellivision)
+root.add(standard)
 #root.add(sega)
-root.add(MenuItem("Raw DB9", lambda:db9_display.display_raw_db9(screen, SCREEN_WIDTH, button_select)))
-root.add(MenuItem("Info", lambda: info_screen.show_info_screen(screen, SCREEN_WIDTH, button_select)))
+root.add(MenuItem("Info",
+		lambda: info_screen.show_info_screen(
+			screen, SCREEN_WIDTH, button_select)))
 
 # Let the MenuSystem run the Menu and dispatch operations accordingly
 MenuSystem(root, screen, button_select, button_next, False).run()
