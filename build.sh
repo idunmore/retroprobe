@@ -45,4 +45,6 @@ mpy-cross src/boot_screen.py -o dist/boot_screen.mpy
 mpy-cross src/info_screen.py -o dist/info_screen.mpy
 mpy-cross src/menu.py -o dist/menu.mpy
 mpy-cross src/sprites.py -o dist/sprites.mpy
+mpy-cross src/db9_port_probe.py -o dist/db9_port_probe.mpy
+mpy-cross src/db9_display.py -o dist/db9_display.mpy
 exit

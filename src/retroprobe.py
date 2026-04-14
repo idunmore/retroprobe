@@ -21,6 +21,7 @@ import adafruit_framebuf
 # Retroprobe Modules
 import boot_screen
 import info_screen
+import db9_display
 from menu import *
 
 # Hardware Constants
@@ -85,7 +86,8 @@ root = Menu("Main Menu")
 root.add(atari)
 root.add(coleco)
 root.add(intellivision)
-root.add(sega)
+#root.add(sega)
+root.add(MenuItem("Raw DB9", lambda:db9_display.display_raw_db9(screen, SCREEN_WIDTH, button_select)))
 root.add(MenuItem("Info", lambda: info_screen.show_info_screen(screen, SCREEN_WIDTH, button_select)))
 
 # Let the MenuSystem run the Menu and dispatch operations accordingly
