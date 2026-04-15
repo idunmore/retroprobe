@@ -47,4 +47,5 @@ mpy-cross src/menu.py -o dist/menu.mpy
 mpy-cross src/sprites.py -o dist/sprites.mpy
 mpy-cross src/db9_port_probe.py -o dist/db9_port_probe.mpy
 mpy-cross src/db9_display.py -o dist/db9_display.mpy
+mpy-cross src/atari_controllers.py -o dist/atari_controllers.mpy
 exit

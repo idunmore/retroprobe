@@ -22,6 +22,7 @@ import adafruit_framebuf
 import boot_screen
 import info_screen
 import db9_display
+import atari_controllers
 from menu import *
 
 # Hardware Constants
@@ -68,6 +69,9 @@ atari_joysticks.add(MenuItem("CX81 Trackball", launch_game("CX81")))
 atari = Menu("Atari")
 atari.add(MenuItem("Atari 2600",   launch_game("Atari 2600")))
 atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
+atari.add(MenuItem("Atari CX40",
+		lambda:atari_controllers.display_cx40(
+			screen,	SCREEN_WIDTH, button_select, 0, 16)))
 atari.add(atari_joysticks)
 
 intellivision = Menu("Intellivision")
