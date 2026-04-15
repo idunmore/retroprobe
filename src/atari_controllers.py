@@ -19,44 +19,14 @@ import time
 # Retroprobe Modules
 import db9_port_probe
 import sprites
+import shared_sprites
 from drawing_primitives import draw_filled_circle
 
-# Sprite Data
-dir_up = bytearray([
-	0b00010000,
-	0b00111000,
-	0b01111100,
-	0b11111110])
-
-dir_down = bytearray([
-	0b11111110,
-	0b01111100,
-	0b00111000,
-	0b00010000])
-
-dir_left = bytearray([
-	0b00010000,
-	0b00110000,
-	0b01110000,
-	0b11110000,
-	0b01110000,
-	0b00110000,
-	0b00010000])
-
-dir_right = bytearray([
-	0b00001000,
-	0b00001100,
-	0b00001110,
-	0b00001111,
-	0b00001110,
-	0b00001100,
-	0b00001000])
-
 # Sprites
-sp_up = sprites.Sprite(dir_up, 8,4)
-sp_down = sprites.Sprite(dir_down, 8,4)
-sp_left = sprites.Sprite(dir_left, 8,7)
-sp_right = sprites.Sprite(dir_right, 8,7)
+sp_up = sprites.Sprite(shared_sprites.dir_up, 8,4)
+sp_down = sprites.Sprite(shared_sprites.dir_down, 8,4)
+sp_left = sprites.Sprite(shared_sprites.dir_left, 8,7)
+sp_right = sprites.Sprite(shared_sprites.dir_right, 8,7)
 
 # Constants
 
@@ -68,9 +38,16 @@ I_DIR = 1
 I_X = 2
 I_Y = 3
 
+# CX40 Constants
+
 # Image size for CX40 and standard sticks
 I_WIDTH = 36
 I_HEIGHT = 36
+
+# Pins
+
+# Ground on CX40 is pin 8, which maps to GPIO pin 7
+CX40_GND_PIN = 7 
 
 # We only need to specify the non-common pins we want to test for, from left
 # (GPIO 0/pin 1) to right (GPIO8/pin 9), and we can omit trailing zeros.
@@ -118,7 +95,7 @@ def draw_controller(screen, width, button, x, y):
 def draw_state(screen, x, y):
 	connections, detected_pins, pin_states = db9_port_probe.probe_connections()
 	# If pin 8 (GND) isn't set, then no other pins matter
-	if pin_states[7] == 0: return
+	if pin_states[CX40_GND_PIN] == 0: return
 
 	# Do trigger
 	if db9_port_probe.are_pins_set(pin_trigger_map, pin_states):
