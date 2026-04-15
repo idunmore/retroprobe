@@ -19,6 +19,7 @@ import time
 # Retroprobe Modules
 import db9_port_probe
 import sprites
+from drawing_primitives import draw_filled_circle
 
 # Sprite Data
 dir_up = bytearray([
@@ -79,17 +80,6 @@ pin_stick_map = {'1': (sp_up, "UP", 17,5),
 				 '0001': (sp_right, "RI", 26, 15) }				 
 
 pin_trigger_map = '000001'
-
-def draw_filled_circle(screen, x, y, radius, color):
-    for i in range(-radius, radius):
-        for j in range(-radius, radius):
-            if i**2 + j**2 <= radius**2:
-                screen.pixel(x + i, y + j, color)
-
-def draw_triangle(screen, x, y, x1, y1, x2, y2, color):
-	screen.line(x, y, x1, y1, color)
-	screen.line(x1, y1, x2, y2, color)
-	screen.line(x2, y2, x, y, color)
 
 def draw_controller(screen, width, button, x, y):
 	# Clear screen
