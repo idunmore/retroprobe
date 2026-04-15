@@ -9,15 +9,63 @@
 # Adafruit CircuitPython 10.1.4 on 2026-03-09; Raspberry Pi Pico with rp2040
 # (w/ 16MB flash memory)
 
+# atari_controllers.py
+#
+# Probe and Display Implementations for Atari Controllers
+
 # Standard Modules
 import time
 
 # Retroprobe Modules
 import db9_port_probe
+import sprites
+
+# Sprite Data
+dir_up = bytearray([
+	0b00010000,
+	0b00111000,
+	0b01111100,
+	0b11111110])
+
+dir_down = bytearray([
+	0b11111110,
+	0b01111100,
+	0b00111000,
+	0b00010000])
+
+dir_left = bytearray([
+	0b00010000,
+	0b00110000,
+	0b01110000,
+	0b11110000,
+	0b01110000,
+	0b00110000,
+	0b00010000])
+
+dir_right = bytearray([
+	0b00001000,
+	0b00001100,
+	0b00001110,
+	0b00001111,
+	0b00001110,
+	0b00001100,
+	0b00001000])
+
+# Sprites
+sp_up = sprites.Sprite(dir_up, 8,4)
+sp_down = sprites.Sprite(dir_down, 8,4)
+sp_left = sprites.Sprite(dir_left, 8,7)
+sp_right = sprites.Sprite(dir_right, 8,7)
 
 # Constants
 
 HEADER_Y_OFFSET = 16
+
+# Tuple Indexes for pin_stick_map
+I_SPRITE = 0
+I_DIR = 1
+I_X = 2
+I_Y = 3
 
 # Image size for CX40 and standard sticks
 I_WIDTH = 36
@@ -25,13 +73,23 @@ I_HEIGHT = 36
 
 # We only need to specify the non-common pins we want to test for, from left
 # (GPIO 0/pin 1) to right (GPIO8/pin 9), and we can omit trailing zeros.
-pin_stick_map = {'1': "UP",
-				 '01': "DOWN",
-				 '001': "LEFT",
-				 '0001': "RIGHT",
-				 '000001': "FIRE"}
+pin_stick_map = {'1': (sp_up, "UP", 17,5),
+				 '01': (sp_down, "DN", 17,28),
+				 '001': (sp_left, "LE", 7,15),
+				 '0001': (sp_right, "RI", 26, 15) }				 
 
 pin_trigger_map = '000001'
+
+def draw_filled_circle(screen, x, y, radius, color):
+    for i in range(-radius, radius):
+        for j in range(-radius, radius):
+            if i**2 + j**2 <= radius**2:
+                screen.pixel(x + i, y + j, color)
+
+def draw_triangle(screen, x, y, x1, y1, x2, y2, color):
+	screen.line(x, y, x1, y1, color)
+	screen.line(x1, y1, x2, y2, color)
+	screen.line(x2, y2, x, y, color)
 
 def draw_controller(screen, width, button, x, y):
 	# Clear screen
@@ -62,7 +120,7 @@ def draw_controller(screen, width, button, x, y):
 
 	# Trigger and stick state
 	screen.text("Button:", x + 48, (y - HEADER_Y_OFFSET) + 23, 1)
-	screen.text(" Stick: UP", x + 48, (y - HEADER_Y_OFFSET) + 39, 1)
+	screen.text(" Stick:", x + 48, (y - HEADER_Y_OFFSET) + 39, 1)
 
 	# Exit line
 	screen.text(" <[Select] to exit.>", 0, 56, 1)			    
@@ -75,22 +133,16 @@ def draw_state(screen, x, y):
 	# Do trigger
 	if db9_port_probe.are_pins_set(pin_trigger_map, pin_states):
 		# Draw the fire button
-		screen.circle(x + 7, y + 7, 3, 1)
-		screen.circle(x + 7, y + 7, 2, 1)
-		screen.circle(x + 7, y + 7, 1, 1)
+		draw_filled_circle(screen, x + 7, y + 7, 3, 1)
 		screen.text("FIRE", x + 91, (y - HEADER_Y_OFFSET) + 23, 1)
 
-		
-
+	# Do stick
+	stick_dir = ''
 	for k, v in pin_stick_map.items():
-		if db9_port_probe.are_pins_set(k, pin_states):
-
-
-
-
-
-			print(f'{k} -> {v}')
-	print('--')
+		if db9_port_probe.are_pins_set(k, pin_states):			
+			v[I_SPRITE].render(screen, v[I_X] + x, v[I_Y] + y, 1)
+			stick_dir += v[I_DIR] if len(stick_dir) == 0 else f'+{v[I_DIR]}'			
+	screen.text(stick_dir, x + 91, (y - HEADER_Y_OFFSET) + 39, 1)
 
 def display_cx40(screen, width, button, x, y):	
 	# Allow for button release
