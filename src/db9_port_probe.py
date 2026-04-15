@@ -65,3 +65,14 @@ def probe_connections():
 				pin_states[j] = ON
 	
 	return connections, detected_pins, pin_states
+
+def are_pins_set(pins, pin_states):
+	'''
+	Checks to see if the pin positions marked as set (1) in "pins" are also set
+	in pin_states[].  We don't compare unset (0) pins, and we don't care if
+	other pins are set in pin_states[] but not in pins.
+	'''
+	for i, bit in enumerate(pins):
+		if bit == '0': continue
+		if bit == '1' and pin_states[i] != 1 : return False
+	return True
