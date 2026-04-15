@@ -67,11 +67,11 @@ atari_joysticks.add(MenuItem("CX80 Trackball", launch_game("CX80")))
 atari_joysticks.add(MenuItem("CX81 Trackball", launch_game("CX81")))
 
 atari = Menu("Atari")
-atari.add(MenuItem("Atari 2600",   launch_game("Atari 2600")))
-atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
 atari.add(MenuItem("Atari CX40",
 		lambda:atari_controllers.display_cx40(
-			screen,	SCREEN_WIDTH, button_select, 0, 16)))
+			screen,	SCREEN_WIDTH, button_select, 4, 16)))
+atari.add(MenuItem("Atari 2600",   launch_game("Atari 2600")))
+atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
 atari.add(atari_joysticks)
 
 intellivision = Menu("Intellivision")
@@ -105,4 +105,4 @@ root.add(MenuItem("Info",
 			screen, SCREEN_WIDTH, button_select)))
 
 # Let the MenuSystem run the Menu and dispatch operations accordingly
-MenuSystem(root, screen, button_select, button_next, False).run()
+MenuSystem(root, screen, button_select, button_next, False, True).run()

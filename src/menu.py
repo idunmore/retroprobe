@@ -135,19 +135,25 @@ class Menu(MenuBase):
 
 class MenuSystem:
     """Run the Menu System as a Controller."""
-    def __init__(self, root, screen, button_select, button_next, quittable=False):
+    def __init__(self, root, screen, button_select, button_next, quittable=False, reset_on_back=True):
         self._screen = screen
         self._button_select = button_select
         self._button_next = button_next
         self._stack = [root]
         self._running = False
+        self._reset_on_back = reset_on_back
         self._inject_navigation(root, is_root=True, add_quit=quittable)
 
     # Helper Methods
 
     def _back(self):
-        if len(self._stack) > 1:
-            self._stack.pop()
+        if len(self._stack) > 1:            
+            last_menu = self._stack.pop()
+            # When we back out of a menu, we want to make sure that we're
+            # back at the top, on the first page, if we come back in.
+            if self._reset_on_back:
+                last_menu._window_cursor = 0
+                last_menu._window_start = 0
 
     def _quit(self):
         self._running = False
