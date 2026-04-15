@@ -12,8 +12,26 @@
 # Standard Modules
 import time
 
+# Retroprobe Modules
+import db9_port_probe
+
+# Constants
+
+HEADER_Y_OFFSET = 16
+
+# Image size for CX40 and standard sticks
 I_WIDTH = 36
 I_HEIGHT = 36
+
+# We only need to specify the non-common pins we want to test for, from left
+# (GPIO 0/pin 1) to right (GPIO8/pin 9), and we can omit trailing zeros.
+pin_stick_map = {'1': "UP",
+				 '01': "DOWN",
+				 '001': "LEFT",
+				 '0001': "RIGHT",
+				 '000001': "FIRE"}
+
+pin_trigger_map = '000001'
 
 def draw_controller(screen, width, button, x, y):
 	# Clear screen
@@ -32,26 +50,59 @@ def draw_controller(screen, width, button, x, y):
 	# Draw the corners
 	screen.line(x + 3, y, x, y + 3, 1)
 	screen.line(x, y + I_HEIGHT -3, x + 3, y + I_HEIGHT, 1)
-	screen.line(x + I_WIDTH, y + I_HEIGHT, x + 3 + I_WIDTH, y + I_HEIGHT -3, 1)
+	screen.line(x + I_WIDTH, y + I_HEIGHT, x + 3 + I_WIDTH, y + I_HEIGHT - 3, 1)
 	screen.line(x + I_WIDTH + 3, y + 3, x + I_WIDTH, y, 1)
 	
+	# Draw the stick's base
+	screen.circle(x + (I_WIDTH // 2) + 2, y + (I_HEIGHT // 2), 5, 1)
+	screen.circle(x + (I_WIDTH // 2) + 2, y + (I_HEIGHT // 2), 8, 1)
+
+	# Draw the fire button
+	screen.circle(x + 7, y + 7, 4, 1)
+
 	# Trigger and stick state
-	screen.text("Button: FIRE", 48, 23, 1)
-	screen.text(" Stick: UP", 48, 39, 1)
+	screen.text("Button:", x + 48, (y - HEADER_Y_OFFSET) + 23, 1)
+	screen.text(" Stick: UP", x + 48, (y - HEADER_Y_OFFSET) + 39, 1)
 
 	# Exit line
 	screen.text(" <[Select] to exit.>", 0, 56, 1)			    
-	screen.show()
+	
+def draw_state(screen, x, y):
+	connections, detected_pins, pin_states = db9_port_probe.probe_connections()
+	# If pin 8 (GND) isn't set, then no other pins matter
+	if pin_states[7] == 0: return
 
+	# Do trigger
+	if db9_port_probe.are_pins_set(pin_trigger_map, pin_states):
+		# Draw the fire button
+		screen.circle(x + 7, y + 7, 3, 1)
+		screen.circle(x + 7, y + 7, 2, 1)
+		screen.circle(x + 7, y + 7, 1, 1)
+		screen.text("FIRE", x + 91, (y - HEADER_Y_OFFSET) + 23, 1)
+
+		
+
+	for k, v in pin_stick_map.items():
+		if db9_port_probe.are_pins_set(k, pin_states):
+
+
+
+
+
+			print(f'{k} -> {v}')
+	print('--')
+
+def display_cx40(screen, width, button, x, y):	
 	# Allow for button release
-	time.sleep(1)
+	time.sleep(0.25)
 	while button.value:
-		print(button.value)
-		pass
+		draw_controller(screen, width, button, x, y)
+		draw_state(screen, x, y)
+		screen.show()
 
 	# Allow for button release
 	time.sleep(0.5)
 	screen.fill(0)
 
-def display_cx40(screen, width, button, x, y):
-	draw_controller(screen, width, button, x, y)
+
+
