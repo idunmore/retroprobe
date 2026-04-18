@@ -58,12 +58,12 @@ pin_stick_map = {'1': (sp_up, "UP", 17,5),
 
 pin_trigger_map = '000001'
 
-def draw_controller(screen, width, button, x, y):
+def draw_controller(screen, width, button, x, y, name):
 	# Clear screen
 	screen.fill(0)
 
 	# Display the title
-	screen.text("Atari CX40", 0, 0, 1)
+	screen.text(name, 0, 0, 1)
 	screen.hline(0, 12, width, 1)
 
 	# Draw the stick outline
@@ -102,11 +102,11 @@ def draw_state(screen, x, y):
 			stick_dir += v[I_DIR] if len(stick_dir) == 0 else f'+{v[I_DIR]}'			
 	screen.text(stick_dir, x + 91, (y - HEADER_Y_OFFSET) + 39, 1)
 
-def display_cx40(screen, width, button, x, y):	
+def display_cx40(screen, width, button, x, y, name="Atari CX40"):	
 	# Allow for button release
 	time.sleep(0.25)
 	while button.value:
-		draw_controller(screen, width, button, x, y)
+		draw_controller(screen, width, button, x, y, name)
 		draw_state(screen, x, y)
 		screen.show()
 

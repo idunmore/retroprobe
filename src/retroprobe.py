@@ -68,17 +68,26 @@ atari_joysticks.add(MenuItem("CX80 Trackball", launch_game("CX80")))
 atari_joysticks.add(MenuItem("CX81 Trackball", launch_game("CX81")))
 
 atari = Menu("Atari")
+atari.add(MenuItem("Atari CX10",
+		lambda:atari_controllers.display_cx40(
+			screen,	SCREEN_WIDTH, button_select, 4, 16, "Atari CX10")))
 atari.add(MenuItem("Atari CX40",
 		lambda:atari_controllers.display_cx40(
-			screen,	SCREEN_WIDTH, button_select, 4, 16)))
+			screen,	SCREEN_WIDTH, button_select, 4, 16, "Atari CX40")))
 atari.add(MenuItem("Atari 2600",   launch_game("Atari 2600")))
 atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
 atari.add(atari_joysticks)
 
 intellivision = Menu("Intellivision")
-intellivision.add(MenuItem("Intellivision I",
-		lambda:intv_controllers.display_intv(screen, SCREEN_WIDTH, button_select, 4, 16)))
-intellivision.add(MenuItem("Intellivision II", launch_game("Intellivision II")))
+intellivision.add(MenuItem("Intellivision",
+		lambda:intv_controllers.display_intv(
+			screen, SCREEN_WIDTH, button_select, 4, 16, "Intellivision")))
+intellivision.add(MenuItem("Intellivision 2",
+		lambda:intv_controllers.display_intv(
+			screen, SCREEN_WIDTH, button_select, 4, 16, "Intellivision 2")))
+intellivision.add(MenuItem("Super Video Arcade",
+		lambda:intv_controllers.display_intv(
+			screen, SCREEN_WIDTH, button_select, 4, 16, "Super Video Arcade")))
 
 coleco = Menu("ColecoVision")
 coleco.add(MenuItem("ColecoVision", launch_game("ColecoVision")))

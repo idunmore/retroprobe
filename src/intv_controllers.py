@@ -62,12 +62,12 @@ pin_disc_map = {'010000000' : (90, 8, 'N'),
 				'001100000' : (102, 34, 'SE'),
 				'100100000' : (78, 34, 'SW')}
 
-def draw_controller(screen, width, x, y):
+def draw_controller(screen, width, x, y, name):
 	# Clear screen
 	screen.fill(0)
 
 	# Display the title
-	screen.text("Intellivision 1", 0, 0, 1)
+	screen.text(f'{name}', 0, 0, 1)
 	screen.hline(0, 12, width, 1)	
 
 	# Verticl Separator
@@ -127,7 +127,9 @@ def draw_disc(screen, x, y, pin_states):
 			# Draw a line indicating the direction being pressed ...
 			screen.line(x + DISC_X_OFFSET, y + DISC_Y_OFFSET,
 				x + disc_info[0], y + disc_info[1], 1)
-			# ... and display the direction name in the top line
+			# ... and display the direction name in the top line, erasing
+			# part of the name if it's too long and conflicts with the name
+			screen.fill_rect(DISC_DIR_TEXT_X - 7, 0, 128-DISC_DIR_TEXT_X, 8, 0)
 			screen.text(f'[{disc_info[2]}]', DISC_DIR_TEXT_X, 0, 1)
 
 def draw_state(screen, x, y):
@@ -139,11 +141,11 @@ def draw_state(screen, x, y):
 	draw_keypad(screen, x, y, pin_states)
 	draw_disc(screen, x, y, pin_states)
 
-def display_intv(screen, width, button, x, y):	
+def display_intv(screen, width, button, x, y, name = 'Intellivision'):	
 	# Allow for button release
 	time.sleep(0.25)
 	while button.value:
-		draw_controller(screen, width, x, y)
+		draw_controller(screen, width, x, y, name)
 		draw_state(screen, x, y)
 		screen.show()
 
