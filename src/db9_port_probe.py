@@ -76,3 +76,14 @@ def are_pins_set(pins, pin_states):
 		if bit == '0': continue
 		if bit == '1' and pin_states[i] != 1 : return False
 	return True
+
+def all_pins_set(pins, pin_states):
+	'''
+	Checks to see if ALL the pins marked as set (1) in "pins" are also set
+	in pin_states[], and that all pins marked as unset (0) in "pins" are also
+	unset in pin_states[].
+	'''
+	for i, bit in enumerate(pins):
+		if bit == '0' and pin_states[i] != 0 : return False
+		if bit == '1' and pin_states[i] != 1 : return False
+	return True
