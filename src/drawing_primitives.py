@@ -13,13 +13,45 @@
 #
 # Additional drawing primitives for Adafruit_framebuf and SSD1306
 
-def draw_filled_circle(screen, x, y, radius, color):
+def filled_circle(screen, x, y, radius, color):
     for i in range(-radius, radius):
         for j in range(-radius, radius):
             if i ** 2 + j ** 2 <= radius ** 2:
                 screen.pixel(x + i, y + j, color)
 
-def draw_triangle(screen, x, y, x1, y1, x2, y2, color):
+def triangle(screen, x, y, x1, y1, x2, y2, color):
 	screen.line(x, y, x1, y1, color)
 	screen.line(x1, y1, x2, y2, color)
 	screen.line(x2, y2, x, y, color)
+
+def filled_rect(screen, x, y, width, height, color):
+    for i in range(x, x + width):
+        for j in range(y, y + height):
+            screen.pixel(i, j, color)
+
+def bevelled_rect(screen, x, y, width, height, bevel, color):
+    # Draw a broken outline
+	screen.line(x + bevel, y, x + width, y, color)
+	screen.line(x , y + bevel, x, y + height - bevel, color)
+	screen.line(x + bevel, y + height, x + width, y + height, color)
+	screen.line(x + bevel + width, y + height -bevel , x + width + bevel, y + bevel, color)
+
+	# Draw the corners
+	screen.line(x + bevel, y, x, y + bevel, color)
+	screen.line(x, y + height -bevel, x + bevel, y + height, color)
+	screen.line(x + width, y + height, x + width + bevel, y + height - bevel, color)
+	screen.line(x + width + bevel, y + bevel, x + width, y, color)
+
+def filled_bevelled_rect(screen, x, y, width, height, bevel, color):
+    # Draw the top bevelled area
+    for i in range(bevel):
+        screen.line(x + bevel - i, y + i, x + (width - bevel) + bevel + i, y + i, color)
+    # Then fill the area between the top and bottom bevels        
+    for i in range(height - (bevel * 2)):
+        screen.line(x, y + bevel + i, x + width + bevel, y + bevel + i, color)
+    # Finally, draw the bottom bevelled area
+    for i in range(bevel + 1):
+        screen.line(x + i, y + i + height - bevel,
+            x + width + bevel - i, y + i + height - bevel, color)    
+
+    
