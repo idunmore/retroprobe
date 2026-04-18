@@ -19,53 +19,110 @@ import time
 # Retroprobe Modules
 import db9_port_probe
 import sprites
-from drawing_primitives import filled_circle, bevelled_rect, filled_bevelled_rect
+from drawing_primitives import *
 
 # Constants
+
+# Display offets and spacing
 KEYPAD_X_OFFSET = 10
+KEYPAD_X_SPACING = 12
+KEYPAD_Y_SPACING = 12
+KEY_WIDTH = 8
+KEY_HEIGHT = 10
+
 LEFT_ACTION_X_OFFSET = 2 
 RIGHT_ACTION_X_OFFSET = 48
 DISC_X_OFFSET = 90
 DISC_Y_OFFSET = 24
 
-matrix = ['1', '4', '7', 'C', '2', '5', '8', '0', '3', '6', '9', 'E']
+# Key and Pin to Keypad maps are linear, but result in the following layout:
+key_label = ['1', '2', '3',
+		  	 '4', '5', '6',
+		  	 '7', '8', '9',
+		  	 'C', '0', 'E']
 
-def draw_controller(screen, width, button, x, y):
+pin_keypad_map = ['000101000', '000100100', '000100010',
+				  '001001000', '001000100', '001000010',
+				  '010001000', '010000100', '010000010',
+				  '100001000', '100000100', '100000010']
+
+PIN_BUTTON_MAP_TOP = '000001010'
+PIN_BUTTON_MAP_LEFT = '000000110'
+PIN_BUTTON_MAP_RIGHT = '000001100'
+
+def draw_controller(screen, width, x, y):
 	# Clear screen
 	screen.fill(0)
 
 	# Display the title
 	screen.text("Intellivision 1", 0, 0, 1)
-	screen.hline(0, 12, width, 1)
-
-	for i in range(3):
-		for j in range(4):
-			bevelled_rect(screen, x + KEYPAD_X_OFFSET + (i * 12), y + (j * 12), 8, 10, 2, 1)
-			screen.text(matrix[(i * 4) + j], x + KEYPAD_X_OFFSET + (i * 12) + 3, y + (j * 12) + 2, 1)
+	screen.hline(0, 12, width, 1)	
 
 	# Verticl Separator
 	screen.vline(width // 2, 22, 36, 1)
 	
-	# Action Buttons
-
-	# Top Buttons - These work as one
-	screen.rect(x + LEFT_ACTION_X_OFFSET, y + 13, 5, 9, 1)
-	screen.rect(x + RIGHT_ACTION_X_OFFSET, y + 13, 5, 9, 1)
-
-	# Bottom Buttons - These are individual
-	screen.rect(x + LEFT_ACTION_X_OFFSET, y + 25, 5, 9, 1)	
-	screen.rect(x + RIGHT_ACTION_X_OFFSET, y + 25, 5, 9, 1)
-
 	# Disc
 	screen.circle(x + DISC_X_OFFSET, y + DISC_Y_OFFSET, 20, 1)
 	screen.circle(x + DISC_X_OFFSET, y + DISC_Y_OFFSET, 18, 1)	
+
+def draw_action_buttons(screen, x, y, pin_states):
+	# Top Buttons - These work as one
+	if db9_port_probe.are_pins_set(PIN_BUTTON_MAP_TOP, pin_states):
+		filled_rect(screen, x + LEFT_ACTION_X_OFFSET, y + 13, 5, 9, 1)
+		filled_rect(screen, x + RIGHT_ACTION_X_OFFSET, y + 13, 5, 9, 1)
+	else:
+		screen.rect(x + LEFT_ACTION_X_OFFSET, y + 13, 5, 9, 1)
+		screen.rect(x + RIGHT_ACTION_X_OFFSET, y + 13, 5, 9, 1)
+
+	# Bottom Left Button
+	if db9_port_probe.are_pins_set(PIN_BUTTON_MAP_LEFT, pin_states):
+		filled_rect(screen, x + LEFT_ACTION_X_OFFSET, y + 25, 5, 9, 1)
+	else:
+		screen.rect(x + LEFT_ACTION_X_OFFSET, y + 25, 5, 9, 1)
+
+	# Bottom Right Button
+	if db9_port_probe.are_pins_set(PIN_BUTTON_MAP_RIGHT, pin_states):
+		filled_rect(screen, x + RIGHT_ACTION_X_OFFSET, y + 25, 5, 9, 1)
+	else:
+		screen.rect(x + RIGHT_ACTION_X_OFFSET, y + 25, 5, 9, 1)
+
+def draw_keypad(screen, x, y, pin_states):
+	for j in range(4):
+		for i in range(3):
+			if db9_port_probe.are_pins_set(
+				pin_keypad_map[(j * 3) + i], pin_states):
+				# Draw the activated key (filled key, black text)
+				filled_bevelled_rect(screen,
+					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING),
+					y + (j * KEYPAD_Y_SPACING), KEY_WIDTH, KEY_HEIGHT, 2, 1)
+				
+				screen.text(key_label[(j * 3) + i], 
+					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING) + 3,
+					y + (j * KEYPAD_Y_SPACING) + 2, 0)
+			else:
+				# Draw the deactivated key (black key, white text)
+				bevelled_rect(screen,
+					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING),
+					y + (j * KEYPAD_Y_SPACING), KEY_WIDTH, KEY_HEIGHT, 2, 1)
+				
+				screen.text(key_label[(j * 3) + i],
+					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING) + 3,
+					y + (j * KEYPAD_Y_SPACING) + 2, 1)
+
+def draw_state(screen, x, y):
+	# Get controller state
+	connections, detected_pins, pin_states = db9_port_probe.probe_connections()
+
+	# Handle the action buttons
+	draw_action_buttons(screen, x, y, pin_states)
+	draw_keypad(screen, x, y, pin_states)
 
 def display_intv(screen, width, button, x, y):	
 	# Allow for button release
 	time.sleep(0.25)
 	while button.value:
-		draw_controller(screen, width, button, x, y)
-		#draw_state(screen, x, y)
+		draw_controller(screen, width, x, y)
+		draw_state(screen, x, y)
 		screen.show()
 
 	# Allow for button release
