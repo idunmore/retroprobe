@@ -20,7 +20,7 @@ import time
 import db9_port_probe
 import sprites
 import shared_sprites
-from drawing_primitives import draw_filled_circle
+from drawing_primitives import filled_circle, bevelled_rect
 
 # Sprites
 sp_up = sprites.Sprite(shared_sprites.dir_up, 8,4)
@@ -66,17 +66,8 @@ def draw_controller(screen, width, button, x, y):
 	screen.text("Atari CX40", 0, 0, 1)
 	screen.hline(0, 12, width, 1)
 
-	# Draw a broken outline
-	screen.line(x + 3, y, x + I_WIDTH, y, 1)
-	screen.line(x , y + 3, x, y + I_HEIGHT - 3, 1)
-	screen.line(x + 3, y + I_HEIGHT, x + I_WIDTH, y + I_HEIGHT, 1)
-	screen.line(x + 3 + I_WIDTH, y + I_HEIGHT -3 , x + I_WIDTH + 3, y + 3, 1)
-
-	# Draw the corners
-	screen.line(x + 3, y, x, y + 3, 1)
-	screen.line(x, y + I_HEIGHT -3, x + 3, y + I_HEIGHT, 1)
-	screen.line(x + I_WIDTH, y + I_HEIGHT, x + 3 + I_WIDTH, y + I_HEIGHT - 3, 1)
-	screen.line(x + I_WIDTH + 3, y + 3, x + I_WIDTH, y, 1)
+	# Draw the stick outline
+	bevelled_rect(screen, x, y, I_WIDTH, I_HEIGHT, 3, 1)
 	
 	# Draw the stick's base
 	screen.circle(x + (I_WIDTH // 2) + 2, y + (I_HEIGHT // 2), 5, 1)
@@ -100,7 +91,7 @@ def draw_state(screen, x, y):
 	# Do trigger
 	if db9_port_probe.are_pins_set(pin_trigger_map, pin_states):
 		# Draw the fire button
-		draw_filled_circle(screen, x + 7, y + 7, 3, 1)
+		filled_circle(screen, x + 7, y + 7, 3, 1)
 		screen.text("FIRE", x + 91, (y - HEADER_Y_OFFSET) + 23, 1)
 
 	# Do stick
