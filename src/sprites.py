@@ -26,11 +26,16 @@ class Sprite:
 		self._width = width
 		self._height = height
 	
-	def render(self, screen, x, y, transparent = False):
+	def render(self, screen, x, y, transparent = False, invert = False):
 		'''Render the Sprite data to the Screen'''
 		for bitmap_y in range(self._height):
 			for bitmap_x in range(self._width):
 				pixel = self._bitmap.pixel(bitmap_x, bitmap_y)
+				
+				# Invert the pixel if inversion is set
+				if invert:
+					pixel = 1 if pixel == 0 else 0
+
 				# Don't draw the pixel if it is a 0 and we want transparency
 				if not transparent or pixel == 1:					
 					screen.pixel(x + bitmap_x, y + bitmap_y, pixel)
