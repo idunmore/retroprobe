@@ -23,6 +23,7 @@ import boot_screen
 import info_screen
 import db9_display
 import atari_controllers
+import intv_controllers
 from menu import *
 
 # Hardware Constants
@@ -75,7 +76,8 @@ atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
 atari.add(atari_joysticks)
 
 intellivision = Menu("Intellivision")
-intellivision.add(MenuItem("Intellivision I",  launch_game("Intellivision I")))
+intellivision.add(MenuItem("Intellivision I",
+		lambda:intv_controllers.display_intv(screen, SCREEN_WIDTH, button_select, 4, 16)))
 intellivision.add(MenuItem("Intellivision II", launch_game("Intellivision II")))
 
 coleco = Menu("ColecoVision")

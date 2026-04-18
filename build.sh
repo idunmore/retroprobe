@@ -50,4 +50,5 @@ mpy-cross src/db9_display.py -o dist/db9_display.mpy
 mpy-cross src/drawing_primitives.py -o dist/drawing_primitives.mpy
 mpy-cross src/shared_sprites.py -o dist/shared_sprites.mpy
 mpy-cross src/atari_controllers.py -o dist/atari_controllers.mpy
+mpy-cross src/intv_controllers.py -o dist/intv_controllers.mpy
 exit
