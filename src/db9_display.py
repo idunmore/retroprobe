@@ -27,6 +27,12 @@ pin_positions = {
 	6: (35, 48), 7: (55, 48), 8: (75, 48), 9: (95, 48)
 }
 
+def show_connections_flag(screen, enabled):
+	if enabled:
+		screen.circle(4, 32, 4, 1)
+		screen.circle(4, 48, 4, 1)
+		screen.line(4, 35, 4, 45, 1)
+
 def draw_port(screen, connections, detected_pins, pin_states,
 			  show_connections = False):
 	'''Draws a DB9 port, showing pins and connection state'''
@@ -54,6 +60,7 @@ def draw_port(screen, connections, detected_pins, pin_states,
 
 	# Only draw connections between pins, if requested
 	if show_connections:
+		show_connections_flag(screen, show_connections)
 		draw_connections(screen, connections)
 	
 	screen.show()
@@ -76,11 +83,18 @@ def draw_connections(screen, connections):
 		screen.line(x1, y1, mid_x, mid_y, 1)
 		screen.line(mid_x, mid_y, x2, y2, 1)
 
-def display_raw_db9(screen, width, button, show_connections = False):
+def display_raw_db9(screen, width, select_button, next_button,
+ 					show_connections = False):
 	'''Display the raw DB9 pin activations; exit on [Select]'''
 	while True:
 		connections, detected_pins, pin_states = db9_port_probe.probe_connections()
 		draw_port(screen, connections, detected_pins, pin_states, show_connections)
 		time.sleep(0.05)
-		if not button.value:
+
+		# Toggle connection lines on/off when [Next] is pressed ... 
+		if not next_button.value:
+			show_connections = not show_connections
+		
+		# Exit this display when [Select] is pressed
+		if not select_button.value:
 			break

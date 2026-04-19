@@ -100,10 +100,10 @@ sega.add(MenuItem("Genesis/MegaDrive", launch_game("Genesis/MegaDrive")))
 standard = Menu("Standard DB9")
 standard.add(MenuItem("DB9 (Pins-Only)",
 				lambda:db9_display.display_raw_db9(
-			 		screen, SCREEN_WIDTH, button_select, False)))
+			 		screen, SCREEN_WIDTH, button_select, button_next, False)))
 standard.add(MenuItem("DB9 (w/ Connections)",
 				lambda:db9_display.display_raw_db9(
-					screen, SCREEN_WIDTH, button_select, True)))
+					screen, SCREEN_WIDTH, button_select, button_next, True)))
 
 root = Menu("Main Menu")
 root.add(atari)
