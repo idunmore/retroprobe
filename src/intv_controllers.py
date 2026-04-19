@@ -37,37 +37,37 @@ DISC_Y_OFFSET = 24
 DISC_DIR_TEXT_X = 96
 
 # Pin state maps for the action buttons
-PIN_BUTTON_MAP_TOP = '000001010'
-PIN_BUTTON_MAP_LEFT = '000000110'
-PIN_BUTTON_MAP_RIGHT = '000001100'
+PIN_BUTTON_MAP_TOP = "000001010"
+PIN_BUTTON_MAP_LEFT = "000000110"
+PIN_BUTTON_MAP_RIGHT = "000001100"
 
 # Key and Pin to Keypad maps are linear, but result in the following layout:
-key_label = ['1', '2', '3',
-		  	 '4', '5', '6',
-		  	 '7', '8', '9',
-		  	 'C', '0', 'E']
+key_label = ["1", "2", "3",
+		  	 "4", "5", "6",
+		  	 "7", "8", "9",
+		  	 "C", "0", "E"]
 
-pin_keypad_map = ['000101000', '000100100', '000100010',
-				  '001001000', '001000100', '001000010',
-				  '010001000', '010000100', '010000010',
-				  '100001000', '100000100', '100000010']
+pin_keypad_map = ["000101000", "000100100", "000100010",
+				  "001001000", "001000100", "001000010",
+				  "010001000", "010000100", "010000010",
+				  "100001000", "100000100", "100000010"]
 
 # Line End, and Name for Disc Directions - 16 Entries, Indexed by Pin State
-pin_disc_map = {'010000000' : (90, 8, 'N'),
-				'011000000' : (102, 14, 'NE'),
-				'110000000' : (78, 14, 'NW'),				
-				'100000000' : (72, 24, 'W'),
-				'001000000' : (108, 24, 'E'),
-				'000100000' : (90, 40, 'S'),
-				'001100000' : (102, 34, 'SE'),
-				'100100000' : (78, 34, 'SW')}
+pin_disc_map = {"010000000" : (90, 8, "N"),
+				"011000000" : (102, 14, "NE"),
+				"110000000" : (78, 14, "NW"),				
+				"100000000" : (72, 24, "W"),
+				"001000000" : (108, 24, "E"),
+				"000100000" : (90, 40, "S"),
+				"001100000" : (102, 34, "SE"),
+				"100100000" : (78, 34, "SW")}
 
 def draw_controller(screen, width, x, y, name):
 	# Clear screen
 	screen.fill(0)
 
 	# Display the title
-	screen.text(f'{name}', 0, 0, 1)
+	screen.text(f"{name}", 0, 0, 1)
 	screen.hline(0, 12, width, 1)	
 
 	# Verticl Separator
@@ -141,7 +141,7 @@ def draw_state(screen, x, y):
 	draw_keypad(screen, x, y, pin_states)
 	draw_disc(screen, x, y, pin_states)
 
-def display_intv(screen, width, button, x, y, name = 'Intellivision'):	
+def display_intv(screen, width, button, x, y, name = "Intellivision"):	
 	# Allow for button release
 	time.sleep(0.25)
 	while button.value:

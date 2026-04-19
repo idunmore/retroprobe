@@ -25,7 +25,7 @@ MENU_WINDOW = 4
 # Classes
 
 class MenuBase:
-	"""Abstract base for all menu elements."""
+	'''Abstract base for all menu elements.'''
 	def __init__(self, display_name):
 		self._display_name = display_name
 
@@ -34,7 +34,7 @@ class MenuBase:
 		return self._display_name
 
 class MenuItem(MenuBase):
-	"""A selectable command/option that invokes a function."""
+	'''A selectable command/option that invokes a function.'''
 	def __init__(self, display_name, action):
 		super().__init__(display_name)
 		self._action = action
@@ -43,7 +43,7 @@ class MenuItem(MenuBase):
 		self._action()
 
 class Menu(MenuBase):
-	"""A navigable list of MenuItems and nested Menus."""
+	'''A navigable list of MenuItems and nested Menus.'''
 
 	# A Menu becomes a sub-menu simply by being added to another Menu.
 
@@ -57,22 +57,22 @@ class Menu(MenuBase):
 		self._window_cursor = 0
 
 	def add(self, entry):
-		"""Append an entry and return self for chaining."""
+		'''Append an entry and return self for chaining.'''
 		self._entries.append(entry)
 		return self
 	
 	def _visible(self):
-		"""Return the items for the current 5-slot display window."""
+		'''Return the items for the current 5-slot display window.'''
 		n = len(self._entries)
 		if n <= MENU_LINES:
 			return list(self._entries)
 		page = self._entries[self._window_start : self._window_start + MENU_WINDOW]
 		at_end = self._window_start + MENU_WINDOW >= n
-		return page + ['<Top...>' if at_end else '<More...>']
+		return page + ["<Top...>" if at_end else "<More...>"]
 
 	@property
 	def current(self):
-		"""The highlighted real entry, or None when on a sentinel."""
+		'''The highlighted real entry, or None when on a sentinel.'''
 		visible = self._visible()
 		if not visible:
 			return None
@@ -80,28 +80,27 @@ class Menu(MenuBase):
 		return None if isinstance(item, str) else item
 
 	def next(self):
-		"""Advance the cursor within the visible window, wrapping around."""
+		'''Advance the cursor within the visible window, wrapping around.'''
 		visible = self._visible()
 		if visible:
 			self._window_cursor = (self._window_cursor + 1) % len(visible)
 
 	def select(self):
-		"""
-		Action the currently highlighted item.
+		'''Action the currently highlighted item.
 		- <More...>: slide the window forward 4 entries.
 		- <Top...>:  reset the window to the first entry.
 		- Menu:      return it (caller pushes it onto the stack).
 		- MenuItem:  execute its action.
-		"""
+		'''
 		visible = self._visible()
 		if not visible:
 			return None
 		item = visible[self._window_cursor]
-		if item == '<More...>':
+		if item == "<More...>":
 			self._window_start += MENU_WINDOW
 			self._window_cursor = 0
 			return None
-		if item == '<Top...>':
+		if item == "<Top...>":
 			self._window_start = 0
 			self._window_cursor = 0
 			return None
@@ -114,7 +113,7 @@ class Menu(MenuBase):
 	# --- display -----------------------------------------------------------
 
 	def _item_label(self, item):
-		"""Return the display string for one visible item."""
+		'''Return the display string for one visible item.'''
 		if isinstance(item, str):
 			return item
 		if isinstance(item, Menu):
@@ -122,7 +121,7 @@ class Menu(MenuBase):
 		return item.display_name
 
 	def show(self, screen):
-		"""Render the current window."""
+		'''Render the current window.'''
 		screen.fill(0)
 		screen.text(self._display_name[:25], 0, 1, 1)
 		screen.hline(0, 12, 128, 1)
@@ -134,7 +133,7 @@ class Menu(MenuBase):
 
 
 class MenuSystem:
-	"""Run the Menu System as a Controller."""
+	'''Run the Menu System as a Controller.'''
 	def __init__(self, root, screen, button_select, button_next, quittable=False, reset_on_back=True):
 		self._screen = screen
 		self._button_select = button_select
@@ -159,7 +158,10 @@ class MenuSystem:
 		self._running = False
 
 	def _inject_navigation(self, menu, *, is_root, add_quit=False):
-		"""Depth-first: add <Back...> to every nested Menu, optionally <Quit> to the root."""
+		'''
+		Depth-first: add <Back...> to every nested Menu, optionally <Quit>
+		to the root.
+		'''
 		for entry in menu._entries:
 			if isinstance(entry, Menu):
 				self._inject_navigation(entry, is_root=False)
@@ -188,7 +190,7 @@ class MenuSystem:
 		self.current_menu.show(self._screen)
 
 	def run(self):
-		"""Start the MenuSystem"""        
+		'''Start the MenuSystem'''        
 		self._running = True
 		show_state = True
 

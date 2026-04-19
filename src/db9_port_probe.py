@@ -73,8 +73,8 @@ def are_pins_set(pins, pin_states):
 	other pins are set in pin_states[] but not in pins.
 	'''
 	for i, bit in enumerate(pins):
-		if bit == '0': continue
-		if bit == '1' and pin_states[i] != 1 : return False
+		if bit == "0": continue
+		if bit == "1" and pin_states[i] != 1 : return False
 	return True
 
 def all_pins_set(pins, pin_states):
@@ -84,6 +84,6 @@ def all_pins_set(pins, pin_states):
 	unset in pin_states[].
 	'''
 	for i, bit in enumerate(pins):
-		if bit == '0' and pin_states[i] != 0 : return False
-		if bit == '1' and pin_states[i] != 1 : return False
+		if bit == "0" and pin_states[i] != 0 : return False
+		if bit == "1" and pin_states[i] != 1 : return False
 	return True

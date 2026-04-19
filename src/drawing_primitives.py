@@ -34,18 +34,21 @@ def bevelled_rect(screen, x, y, width, height, bevel, color):
 	screen.line(x + bevel, y, x + width, y, color)
 	screen.line(x , y + bevel, x, y + height - bevel, color)
 	screen.line(x + bevel, y + height, x + width, y + height, color)
-	screen.line(x + bevel + width, y + height -bevel , x + width + bevel, y + bevel, color)
+	screen.line(x + bevel + width, y + height -bevel,
+				x + width + bevel, y + bevel, color)
 
 	# Draw the corners
 	screen.line(x + bevel, y, x, y + bevel, color)
 	screen.line(x, y + height -bevel, x + bevel, y + height, color)
-	screen.line(x + width, y + height, x + width + bevel, y + height - bevel, color)
+	screen.line(x + width, y + height, x + width + bevel,
+				y + height - bevel, color)
 	screen.line(x + width + bevel, y + bevel, x + width, y, color)
 
 def filled_bevelled_rect(screen, x, y, width, height, bevel, color):
 	# Draw the top bevelled area
 	for i in range(bevel):
-		screen.line(x + bevel - i, y + i, x + (width - bevel) + bevel + i, y + i, color)
+		screen.line(x + bevel - i, y + i,
+					x + (width - bevel) + bevel + i, y + i, color)
 	# Then fill the area between the top and bottom bevels        
 	for i in range(height - (bevel * 2)):
 		screen.line(x, y + bevel + i, x + width + bevel, y + bevel + i, color)
