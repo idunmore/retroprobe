@@ -51,12 +51,12 @@ CX40_GND_PIN = 7
 
 # We only need to specify the non-common pins we want to test for, from left
 # (GPIO 0/pin 1) to right (GPIO8/pin 9), and we can omit trailing zeros.
-pin_stick_map = {'1': (sp_up, "UP", 17,5),
-				 '01': (sp_down, "DN", 17,28),
-				 '001': (sp_left, "LE", 7,15),
-				 '0001': (sp_right, "RI", 26, 15) }				 
+pin_stick_map = {"1": (sp_up, "UP", 17,5),
+				 "01": (sp_down, "DN", 17,28),
+				 "001": (sp_left, "LE", 7,15),
+				 "0001": (sp_right, "RI", 26, 15) }				 
 
-pin_trigger_map = '000001'
+pin_trigger_map = "000001"
 
 def draw_controller(screen, width, button, x, y, name):
 	# Clear screen
@@ -78,10 +78,7 @@ def draw_controller(screen, width, button, x, y, name):
 
 	# Trigger and stick state
 	screen.text("Button:", x + 48, (y - HEADER_Y_OFFSET) + 23, 1)
-	screen.text(" Stick:", x + 48, (y - HEADER_Y_OFFSET) + 39, 1)
-
-	# Exit line
-	screen.text(" <[Select] to exit.>", 0, 56, 1)			    
+	screen.text(" Stick:", x + 48, (y - HEADER_Y_OFFSET) + 39, 1)	    
 	
 def draw_state(screen, x, y):
 	connections, detected_pins, pin_states = db9_port_probe.probe_connections()
@@ -95,11 +92,11 @@ def draw_state(screen, x, y):
 		screen.text("FIRE", x + 91, (y - HEADER_Y_OFFSET) + 23, 1)
 
 	# Do stick
-	stick_dir = ''
+	stick_dir = ""
 	for k, v in pin_stick_map.items():
 		if db9_port_probe.are_pins_set(k, pin_states):			
 			v[I_SPRITE].render(screen, v[I_X] + x, v[I_Y] + y, 1)
-			stick_dir += v[I_DIR] if len(stick_dir) == 0 else f'+{v[I_DIR]}'			
+			stick_dir += v[I_DIR] if len(stick_dir) == 0 else f"+{v[I_DIR]}"			
 	screen.text(stick_dir, x + 91, (y - HEADER_Y_OFFSET) + 39, 1)
 
 def display_cx40(screen, width, button, x, y, name="Atari CX40"):	
@@ -113,6 +110,3 @@ def display_cx40(screen, width, button, x, y, name="Atari CX40"):
 	# Allow for button release
 	time.sleep(0.5)
 	screen.fill(0)
-
-
-

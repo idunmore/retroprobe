@@ -70,10 +70,10 @@ atari_joysticks.add(MenuItem("CX81 Trackball", launch_game("CX81")))
 atari = Menu("Atari")
 atari.add(MenuItem("Atari CX10",
 		lambda:atari_controllers.display_cx40(
-			screen,	SCREEN_WIDTH, button_select, 4, 16, "Atari CX10")))
+			screen,	SCREEN_WIDTH, button_select, 4, 21, "Atari CX10")))
 atari.add(MenuItem("Atari CX40",
 		lambda:atari_controllers.display_cx40(
-			screen,	SCREEN_WIDTH, button_select, 4, 16, "Atari CX40")))
+			screen,	SCREEN_WIDTH, button_select, 4, 21, "Atari CX40")))
 atari.add(MenuItem("Atari 2600",   launch_game("Atari 2600")))
 atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
 atari.add(atari_joysticks)
