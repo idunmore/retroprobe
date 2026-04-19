@@ -16,41 +16,46 @@ import time
 from drawing_primitives import filled_circle
 import db9_port_probe
 
+# Constants
+PIN_RADIUS = 7
+PIN_TEXT_OFFSET = 3
+
 # Map of Pin Numbers (per DB9 connector) and their display coordinates.
 # (Viewed from the front of the male DB9 socket; Pin 1 is top left)
 pin_positions = {
 	1: (25, 26), 2: (45, 26), 3: (65, 26), 4: (85, 26), 5: (105, 26),    
-	6: (35, 42), 7: (55, 42), 8: (75, 42), 9: (95, 42)
+	6: (35, 48), 7: (55, 48), 8: (75, 48), 9: (95, 48)
 }
 
 def draw_port(screen, connections, detected_pins, pin_states,
 			  show_connections = False):
 	'''Draws a DB9 port, showing pins and connection state'''
 	screen.fill(0)
-	screen.text("Male DB9 - Front View", 0, 0, 1)
 
-	# Draw the port outline
+	# Title
+	screen.text("Male DB9 - Front View", 0, 0, 1)
 	screen.hline(0,12,128,1)
+
+	# Draw the port outline	
 	screen.hline(10,16,108,1)
-	screen.hline(20,53,88,1)
-	screen.line(10,16,20,53,1)
-	screen.line(118,16,108,53,1)
+	screen.hline(20,58,88,1)
+	screen.line(10,16,20,58,1)
+	screen.line(118,16,108,58,1)
 
 	# Draw the pins; empty circles if not connected to anything,
 	# filled circles if the pin is connected.
 	for pin, (x, y) in pin_positions.items():
 		if pin in detected_pins:
-			filled_circle(screen, x -1, y, 7, 1)
-			screen.text(str(pin), x - 3, y - 3, 0)  
+			filled_circle(screen, x -1, y, PIN_RADIUS, 1)
+			screen.text(str(pin), x - PIN_TEXT_OFFSET, y - PIN_TEXT_OFFSET, 0)  
 		else:
-			screen.circle(x - 1, y, 7, 1)
-			screen.text(str(pin), x - 3, y - 3, 1)
+			screen.circle(x - 1, y, PIN_RADIUS, 1)
+			screen.text(str(pin), x - PIN_TEXT_OFFSET, y - PIN_TEXT_OFFSET, 1)
 
 	# Only draw connections between pins, if requested
 	if show_connections:
 		draw_connections(screen, connections)
-
-	screen.text(" <[Select] to exit.>", 0, 56, 1)
+	
 	screen.show()
 
 def draw_connections(screen, connections):
