@@ -52,12 +52,12 @@ def launch_game(name):
 i2c = busio.I2C(I2C_SCL, I2C_SDA)
 screen = adafruit_ssd1306.SSD1306_I2C(SCREEN_WIDTH, SCREEN_HEIGHT, i2c)
 
-# Display the Boot Screen
-boot_screen.show_boot_screen(screen, SCREEN_WIDTH)
-
 # Setup "Select" and "Next" navigation buttons
 button_next = create_button(board.GP16)
 button_select = create_button(board.GP17)
+
+# Display the Boot Screen
+boot_screen.show_boot_screen(screen, SCREEN_WIDTH, button_select)
 
 # Build an example/placeholder menu for testing
 atari_joysticks = Menu("Joysticks")
