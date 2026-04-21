@@ -18,7 +18,6 @@ import time
 
 # Retroprobe Modules
 import db9_port_probe
-import sprites
 from drawing_primitives import *
 
 # Constants
