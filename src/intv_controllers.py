@@ -54,12 +54,20 @@ pin_keypad_map = ["000101000", "000100100", "000100010",
 
 # Line End, and Name for Disc Directions - 16 Entries, Indexed by Pin State
 pin_disc_map = {"010000000" : (90, 8, "N"),
+				"010010001"	: (96, 7, "NNE"),
 				"011000000" : (102, 14, "NE"),
-				"110000000" : (78, 14, "NW"),				
+				"110010001" : (84, 7, "NNW"),
+				"110000000" : (78, 14, "NW"),
+				"100010001" : (74, 20, "WNW"),				
 				"100000000" : (72, 24, "W"),
+				"100110001" : (74, 28, "WSW"),
+				"011010001" : (106, 20, "ENE"),
 				"001000000" : (108, 24, "E"),
+				"001010001" : (106, 28, "ESE"),
 				"000100000" : (90, 40, "S"),
+				"001110001" : (96, 38, "SSE"),
 				"001100000" : (102, 34, "SE"),
+				"000110001" : (84, 38, "SSW"),
 				"100100000" : (78, 34, "SW")}
 
 def draw_controller(screen, width, x, y, name):
@@ -123,6 +131,7 @@ def draw_keypad(screen, x, y, pin_states):
 
 def draw_disc(screen, x, y, pin_states):
 	for pin_state, disc_info in pin_disc_map.items():
+		print(pin_states)
 		if db9_port_probe.all_pins_set(pin_state, pin_states):
 			# Draw a line indicating the direction being pressed ...
 			screen.line(x + DISC_X_OFFSET, y + DISC_Y_OFFSET,
