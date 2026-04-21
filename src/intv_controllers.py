@@ -130,8 +130,7 @@ def draw_keypad(screen, x, y, pin_states):
 					y + (j * KEYPAD_Y_SPACING) + 2, 1)
 
 def draw_disc(screen, x, y, pin_states):
-	for pin_state, disc_info in pin_disc_map.items():
-		print(pin_states)
+	for pin_state, disc_info in pin_disc_map.items():		
 		if db9_port_probe.all_pins_set(pin_state, pin_states):
 			# Draw a line indicating the direction being pressed ...
 			screen.line(x + DISC_X_OFFSET, y + DISC_Y_OFFSET,
