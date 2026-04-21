@@ -60,12 +60,19 @@ button_select = create_button(board.GP17)
 boot_screen.show_boot_screen(screen, SCREEN_WIDTH, button_select)
 
 # Build an example/placeholder menu for testing
-atari_joysticks = Menu("Joysticks")
-atari_joysticks.add(MenuItem("CX10 Joystick", launch_game("CX10")))
-atari_joysticks.add(MenuItem("CX40 Joystick", launch_game("CX40")))
-atari_joysticks.add(MenuItem("CX78 Gamepad",  launch_game("CX78")))
-atari_joysticks.add(MenuItem("CX80 Trackball", launch_game("CX80")))
-atari_joysticks.add(MenuItem("CX81 Trackball", launch_game("CX81")))
+# atari_joysticks = Menu("Joysticks")
+# atari_joysticks.add(MenuItem("CX10 Joystick", launch_game("CX10")))
+# atari_joysticks.add(MenuItem("CX40 Joystick", launch_game("CX40")))
+
+# atari_gamepads = Menu("Gamepads")
+# atari_gamepads.add(MenuItem("CX78/CX78+ Gamepad", launch_game("CX78/CX78+")))
+
+# atari_paddles = Menu("Paddles")
+# atari_paddles.add(MenuItem("CX30/CX30+ Paddles", launch_game("CX30/CX30+")))
+
+# atari_trakballs = Menu("Trak-Balls")
+# atari_trakballs.add(MenuItem("CX22 Trak-Ball",  launch_game("CX22")))
+# atari_trakballs.add(MenuItem("CX80 Trak-Ball", launch_game("CX80")))
 
 atari = Menu("Atari")
 atari.add(MenuItem("Atari CX10",
@@ -74,9 +81,12 @@ atari.add(MenuItem("Atari CX10",
 atari.add(MenuItem("Atari CX40",
 		lambda:atari_controllers.display_cx40(
 			screen,	SCREEN_WIDTH, button_select, 4, 21, "Atari CX40")))
-atari.add(MenuItem("Atari 2600",   launch_game("Atari 2600")))
-atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
-atari.add(atari_joysticks)
+#atari.add(MenuItem("Atari 2600",   launch_game("Atari 2600")))
+#atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
+# atari.add(atari_joysticks)
+# atari.add(atari_gamepads)
+# atari.add(atari_paddles)
+# atari.add(atari_trakballs)
 
 intellivision = Menu("Intellivision")
 intellivision.add(MenuItem("Intellivision",
@@ -89,15 +99,15 @@ intellivision.add(MenuItem("Super Video Arcade",
 		lambda:intv_controllers.display_intv(
 			screen, SCREEN_WIDTH, button_select, 4, 16, "Super Video Arcade")))
 
-coleco = Menu("ColecoVision")
-coleco.add(MenuItem("ColecoVision", launch_game("ColecoVision")))
-coleco.add(MenuItem("Coleco VCS Adapter", launch_game("Coleco VCS Adapter")))
+# coleco = Menu("ColecoVision")
+# coleco.add(MenuItem("ColecoVision", launch_game("ColecoVision")))
+# coleco.add(MenuItem("Coleco VCS Adapter", launch_game("Coleco VCS Adapter")))
 
-sega = Menu("SEGA")
-sega.add(MenuItem("Master System", launch_game("Master System")))
-sega.add(MenuItem("Genesis/MegaDrive", launch_game("Genesis/MegaDrive")))
+# sega = Menu("SEGA")
+# sega.add(MenuItem("Master System", launch_game("Master System")))
+# sega.add(MenuItem("Genesis/MegaDrive", launch_game("Genesis/MegaDrive")))
 
-standard = Menu("Standard DB9")
+standard = Menu("Raw 9-pin DSUB")
 standard.add(MenuItem("DB9 (Pins-Only)",
 				lambda:db9_display.display_raw_db9(
 			 		screen, SCREEN_WIDTH, button_select, button_next, False)))
@@ -107,7 +117,7 @@ standard.add(MenuItem("DB9 (w/ Connections)",
 
 root = Menu("Main Menu")
 root.add(atari)
-root.add(coleco)
+#root.add(coleco)
 root.add(intellivision)
 root.add(standard)
 #root.add(sega)
