@@ -75,12 +75,19 @@ boot_screen.show_boot_screen(screen, SCREEN_WIDTH, button_select)
 # atari_trakballs.add(MenuItem("CX80 Trak-Ball", launch_game("CX80")))
 
 atari = Menu("Atari")
-atari.add(MenuItem("Atari CX10",
-		lambda:atari_controllers.display_cx40(
-			screen,	SCREEN_WIDTH, button_select, 4, 21, "Atari CX10")))
-atari.add(MenuItem("Atari CX40",
-		lambda:atari_controllers.display_cx40(
-			screen,	SCREEN_WIDTH, button_select, 4, 21, "Atari CX40")))
+atari.add(MenuItem("CX10 Joystick",
+		lambda:atari_controllers.display_joystick(
+			screen,	SCREEN_WIDTH, button_select, 4, 21, "CX10 Joystick")))
+atari.add(MenuItem("CX40 Joystick",
+		lambda:atari_controllers.display_joystick(
+			screen,	SCREEN_WIDTH, button_select, 4, 21, "CX40 Joystick")))
+atari.add(MenuItem("CX21 Video Touch Pad",
+		lambda:atari_controllers.display_keypad(
+			screen,	SCREEN_WIDTH, button_select, 0, 16, "CX21 Video Touch Pad")))
+atari.add(MenuItem("CX50 Keyboard",
+		lambda:atari_controllers.display_keypad(
+			screen,	SCREEN_WIDTH, button_select, 0, 16, "CX50 Keyboard")))
+
 #atari.add(MenuItem("Atari 2600",   launch_game("Atari 2600")))
 #atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
 # atari.add(atari_joysticks)

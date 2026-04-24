@@ -15,12 +15,13 @@
 
 # Standard Modules
 import time
+from collections import OrderedDict
 
 # Retroprobe Modules
 import db9_port_probe
 import sprites
 import shared_sprites
-from drawing_primitives import filled_circle, bevelled_rect
+from drawing_primitives import filled_circle, bevelled_rect, filled_bevelled_rect
 
 # Sprites
 sp_up = sprites.Sprite(shared_sprites.dir_up, 8,4)
@@ -44,7 +45,7 @@ I_Y = 3
 I_WIDTH = 36
 I_HEIGHT = 36
 
-# Pins
+# CX 40 Pins
 
 # Ground on CX40 is pin 8, which maps to GPIO pin 7
 CX40_GND_PIN = 7 
@@ -58,7 +59,59 @@ pin_stick_map = {"1": (sp_up, "UP", 17,5),
 
 pin_trigger_map = "000001"
 
-def draw_controller(screen, width, button, x, y, name):
+# Keypad/Keyboard Constants
+
+# Display offets and spacing
+KEYPAD_X_OFFSET = 40
+KEYPAD_X_SPACING = 16
+KEYPAD_Y_SPACING = 12
+KEY_WIDTH = 10
+KEY_HEIGHT = 10
+
+# Empty Keypad Maps
+keypad_connection_map = OrderedDict()
+key_labels = []
+keys = []
+
+def connections_to_key(connections):
+	return ", ".join([f"{a}-{b}" for a, b in connections])
+
+def build_keypad_maps():
+	# Connection Dictionary w/ labels for CX21, CX50 (etc.)		
+	keypad_connection_map[connections_to_key(
+		[(1, 5), (1, 7), (1, 9), (5, 7), (5, 9), (7,9)])] = "1"
+	keypad_connection_map[connections_to_key(
+		[(1, 5), (1, 7), (1, 9), (5, 7), (7, 9), (9,5)])] = "2"
+	keypad_connection_map[connections_to_key(
+		[(1, 6), (5, 7), (5, 9), (7, 9)])] = "3"
+	keypad_connection_map[connections_to_key(
+		[(2, 5), (2, 7), (2, 9), (5, 7), (5, 9), (7,9)])] = "4"
+	keypad_connection_map[connections_to_key(
+		[(2, 5), (2, 7), (2, 9), (5, 7), (7, 9), (9,5)])] = "5"
+	keypad_connection_map[connections_to_key([(2, 6), (5, 7), (5, 9), (7, 9)])] = "6"
+	keypad_connection_map[connections_to_key(
+		[(3, 5), (3, 7), (3, 9), (5, 7), (5, 9), (7,9)])] = "7"
+	keypad_connection_map[connections_to_key(
+		[(3, 5), (3, 7), (3, 9), (5, 7), (7, 9), (9,5)])] = "8"
+	keypad_connection_map[connections_to_key(
+		[(3, 6), (5, 7), (5, 9), (7, 9)])] = "9"
+	keypad_connection_map[connections_to_key(
+		[(4, 5), (4, 7), (4, 9), (5, 7), (5, 9), (7,9)])] = "*"
+	keypad_connection_map[connections_to_key(
+		[(4, 5), (4, 7), (4, 9), (5, 7), (7, 9), (9,5)])] = "0"
+	keypad_connection_map[connections_to_key(
+		[(4, 6), (5, 7), (5, 9), (7, 9)])] = "#"
+	keypad_connection_map[connections_to_key(
+		[(5, 7), (5, 9), (7, 9)])] = "?"
+
+	# Indexable list of Key Labels, for drawing keypad
+	key_labels.extend([v for v in keypad_connection_map.values()])
+
+	# Indexable List of Key Pressesd (by connection map key), for checking
+	# key state during drawing
+	keys.extend([k for k in keypad_connection_map.keys()])
+
+def draw_joystick_controller(screen, width, button, x, y, name):
 	# Clear screen
 	screen.fill(0)
 
@@ -80,7 +133,7 @@ def draw_controller(screen, width, button, x, y, name):
 	screen.text("Button:", x + 48, (y - HEADER_Y_OFFSET) + 23, 1)
 	screen.text(" Stick:", x + 48, (y - HEADER_Y_OFFSET) + 39, 1)	    
 	
-def draw_state(screen, x, y):
+def draw_joystick_state(screen, x, y):
 	connections, detected_pins, pin_states = db9_port_probe.probe_connections()
 	# If pin 8 (GND) isn't set, then no other pins matter
 	if pin_states[CX40_GND_PIN] == 0: return
@@ -99,14 +152,67 @@ def draw_state(screen, x, y):
 			stick_dir += v[I_DIR] if len(stick_dir) == 0 else f"+{v[I_DIR]}"			
 	screen.text(stick_dir, x + 91, (y - HEADER_Y_OFFSET) + 39, 1)
 
-def display_cx40(screen, width, button, x, y, name="Atari CX40"):	
+def display_joystick(screen, width, button, x, y, name="CX40 Joystick"):	
 	# Allow for button release
 	time.sleep(0.25)
 	while button.value:
-		draw_controller(screen, width, button, x, y, name)
-		draw_state(screen, x, y)
+		draw_joystick_controller(screen, width, button, x, y, name)
+		draw_joystick_state(screen, x, y)
 		screen.show()
 
 	# Allow for button release
 	time.sleep(0.5)
 	screen.fill(0)
+
+def draw_keypad_controller(screen, width, button, x, y, name):
+	# Clear the screen
+	screen.fill(0)
+
+	# Display the title
+	screen.text(name, 0, 0, 1)
+	screen.hline(0, 12, width, 1)
+	screen.vline(KEYPAD_X_OFFSET - 7, 20, 40, 1)
+	screen.vline(KEYPAD_X_OFFSET + (3 * KEYPAD_X_SPACING) + 4, 20, 40, 1)
+	
+def draw_keypad_state(screen, x, y):
+	# Get the current connections and their corresponding dictionary key
+	connections, detected_pins, pin_states = db9_port_probe.probe_connections()	
+	key = connections_to_key(connections)
+	
+	# Draw the keypad, row by row
+	for j in range(4):
+		for i in range(3):
+			index = (j * 3) + i
+			key_pressed = False
+			if key == keys[index]:
+				# Draw the activated key (filled key, black text)
+				filled_bevelled_rect(screen,
+					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING),
+					y + (j * KEYPAD_Y_SPACING), KEY_WIDTH, KEY_HEIGHT, 2, 1)				
+				key_pressed = True
+			else:
+				# Draw the deactivated key (black key, white text)
+				bevelled_rect(screen,
+					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING),
+					y + (j * KEYPAD_Y_SPACING), KEY_WIDTH, KEY_HEIGHT, 2, 1)
+				
+			# Show key label; inverted color if key is pressed
+			screen.text(key_labels[index],
+				x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING) + 4,
+				y + (j * KEYPAD_Y_SPACING) + 2,
+				1 if not key_pressed else 0)
+
+def display_keypad(screen, width, button, x, y, name="Atari Keypad Controller"):
+	# Allow for button release
+	time.sleep(0.25)	
+
+	build_keypad_maps()	
+	
+	while button.value:
+		draw_keypad_controller(screen, width, button, x, y, name)
+		draw_keypad_state(screen, x, y)
+		screen.show()
+
+	# Allow for button release
+	time.sleep(0.5)
+	screen.fill(0)		
