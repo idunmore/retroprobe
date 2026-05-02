@@ -59,18 +59,6 @@ button_select = create_button(board.GP17)
 # Display the Boot Screen
 boot_screen.show_boot_screen(screen, SCREEN_WIDTH, button_select)
 
-
-
-# atari_gamepads = Menu("Gamepads")
-# atari_gamepads.add(MenuItem("CX78/CX78+ Gamepad", launch_game("CX78/CX78+")))
-
-# atari_paddles = Menu("Paddles")
-# atari_paddles.add(MenuItem("CX30/CX30+ Paddles", launch_game("CX30/CX30+")))
-
-# atari_trakballs = Menu("Trak-Balls")
-# atari_trakballs.add(MenuItem("CX22 Trak-Ball",  launch_game("CX22")))
-# atari_trakballs.add(MenuItem("CX80 Trak-Ball", launch_game("CX80")))
-
 # Add Atari Controller Categories and Controllers to the Menu
 atari = Menu("Atari")
 
@@ -93,14 +81,18 @@ atari_keypads.add(MenuItem("CX50 Keyboard",
 atari_paddles = Menu("Paddles")
 atari_paddles.add(MenuItem("CX30 Paddle",
 		lambda:atari_controllers.display_paddle(
-			screen,	SCREEN_WIDTH, button_select, 0, 16, "CX30 Paddle")))
+			screen,	SCREEN_WIDTH, button_select, button_next, 0, 16,
+			"CX30 Paddle", False)))
+atari_paddles.add(MenuItem("CX30 (w/ Dial Value)",
+		lambda:atari_controllers.display_paddle(
+			screen,	SCREEN_WIDTH, button_select, button_next, 0, 16,
+			"CX30 Paddle", True)))
 
 atari.add(atari_joysticks)
 atari.add(atari_keypads)
 atari.add(atari_paddles)
-# atari.add(atari_gamepads)
-# atari.add(atari_trakballs)
 
+# Intellivision Controllers and Categories
 intellivision = Menu("Intellivision")
 intellivision.add(MenuItem("Intellivision",
 		lambda:intv_controllers.display_intv(
@@ -112,14 +104,7 @@ intellivision.add(MenuItem("Super Video Arcade",
 		lambda:intv_controllers.display_intv(
 			screen, SCREEN_WIDTH, button_select, 4, 16, "Super Video Arcade")))
 
-# coleco = Menu("ColecoVision")
-# coleco.add(MenuItem("ColecoVision", launch_game("ColecoVision")))
-# coleco.add(MenuItem("Coleco VCS Adapter", launch_game("Coleco VCS Adapter")))
-
-# sega = Menu("SEGA")
-# sega.add(MenuItem("Master System", launch_game("Master System")))
-# sega.add(MenuItem("Genesis/MegaDrive", launch_game("Genesis/MegaDrive")))
-
+# Raw Port Probe Options
 standard = Menu("Raw 9-pin DSUB")
 standard.add(MenuItem("DB9 (Pins-Only)",
 				lambda:db9_display.display_raw_db9(
@@ -128,12 +113,10 @@ standard.add(MenuItem("DB9 (w/ Connections)",
 				lambda:db9_display.display_raw_db9(
 					screen, SCREEN_WIDTH, button_select, button_next, True)))
 
-root = Menu("Main Menu")
+root = Menu("RetroProbe Main Menu")
 root.add(atari)
-#root.add(coleco)
 root.add(intellivision)
 root.add(standard)
-#root.add(sega)
 root.add(MenuItem("Info",
 		lambda: info_screen.show_info_screen(
 			screen, SCREEN_WIDTH, button_select)))

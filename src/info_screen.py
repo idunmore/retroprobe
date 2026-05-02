@@ -22,7 +22,7 @@ def show_info_screen(screen, width, button):
 	screen.hline(0, 12, width, 1)
 
 	# Retroprobe version
-	screen.text("v.0.0.3a/2026-04-24", 0, 16, 1)
+	screen.text("v.0.0.4a/2026-05-02", 0, 16, 1)
 
 	# Python (Micro Python) and Circuit Python versions
 	ver = sys.version

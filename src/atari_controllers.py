@@ -15,13 +15,14 @@
 
 # Standard Modules
 import time
+import math
 from collections import OrderedDict
 
 # Retroprobe Modules
 import db9_port_probe
 import sprites
 import shared_sprites
-from drawing_primitives import filled_circle, bevelled_rect, filled_bevelled_rect
+from drawing_primitives import *
 
 # Circuit Python & Adafruit Modules
 import board
@@ -65,13 +66,20 @@ pin_stick_map = {"1": (sp_up, "UP", 17,5),
 
 pin_trigger_map = "000001"
 
-# Keypad/Keyboard Constants
-
 # Paddle Constants
+
+# Pins
 PADDLE_0_DIAL_PIN = 1
 PADDLE_0_TRIGGER_PIN = 3
 PADDLE_1_DIAL_PIN = 0
 PADDLE_1_TRIGGER_PIN = 2
+
+# Dimenions and spacing for drawing the paddle controller
+DIAL_RADIUS = 19
+DIAL_DEAD_ZONE = 0.4
+DIAL_CENTER_OFFSET = 5
+
+# Keypad/Keyboard Constants
 
 # Display offets and spacing
 KEYPAD_X_OFFSET = 40
@@ -99,12 +107,12 @@ class Paddle:
 	PADDLE_GND_PIN = 7
 
 	# Setup a surrogate VCC pin (digital output, True, at 3.3v) to drive the pot
-	vcc = db9_port_probe.pins[self.PADDLE_VCC_PIN]
+	vcc = db9_port_probe.pins[PADDLE_VCC_PIN]
 	vcc.direction = digitalio.Direction.OUTPUT
 	vcc.value = True
 
 	# Setup a surrogate GND pin (digital output, False, at 0v) to drive the pot
-	gnd = db9_port_probe.pins[self.PADDLE_GND_PIN]
+	gnd = db9_port_probe.pins[PADDLE_GND_PIN]
 	gnd.direction = digitalio.Direction.OUTPUT
 	gnd.value = False
 
@@ -280,31 +288,78 @@ def display_keypad(screen, width, button, x, y, name="Atari Keypad Controller"):
 	time.sleep(0.5)
 	screen.fill(0)	
 
-def draw_paddle_controller(screen, width, button, x, y, name):
-	# Clear screen
-	screen.fill(0)
+# Paddle Display
 
+def draw_paddle_screen(screen, width, x, y, name):
+	# Clear the screen
+	screen.fill(0)
 	# Display the title
 	screen.text(name, 0, 0, 1)
 	screen.hline(0, 12, width, 1)
-	
-def draw_paddle_state(screen, x, y, paddle):
-	
+	# Verticl Separator
+	screen.vline(width // 2, 22, 36, 1)
+
+def draw_paddle_controller(screen, width, x, y, name):
+	screen.circle(x + DIAL_RADIUS, y + DIAL_RADIUS, DIAL_RADIUS, 1)
+	screen.circle(x + DIAL_RADIUS, y + DIAL_RADIUS, DIAL_RADIUS - 2, 1)
+
+def draw_paddle_state(screen, x, y, paddle, show_dial_value = False):
 	real = paddle.position
 	trig = paddle.trigger
-	print(f"Real Dial Value: {real}, Trigger: {trig}") 	
 
-def display_paddle(screen, width, button, x, y, name="CX30 Paddle Controller"):
+	# Draw a line representing the dial position, allowing for the fact
+	# that the Paddle's range does not describe a full circle
+	cx = x + DIAL_RADIUS
+	cy = y + DIAL_RADIUS
+	start_x = cx
+	start_y = cy
+
+	angle = adafruit_simplemath.map_range(
+		real, Paddle.PADDLE_LOW_VAL, Paddle.PADDLE_HIGH_VAL,
+		DIAL_DEAD_ZONE, (2 * math.pi) - DIAL_DEAD_ZONE)
+
+	if show_dial_value:
+		# Override the default starting point for the line, to make room
+		# for the dial's value.
+		start_x = cx + int(math.sin(angle) * DIAL_CENTER_OFFSET)
+		start_y = cy - int(math.cos(angle) * DIAL_CENTER_OFFSET)
+	
+	end_x = cx + int(math.sin(angle) * (DIAL_RADIUS - 1))
+	end_y = cy - int(math.cos(angle) * (DIAL_RADIUS - 1))
+
+	screen.line(start_x, start_y, end_x, end_y, 1)
+
+	if show_dial_value:
+		# Show the dial's numeric value
+		screen.text(f"[{real:3}]", x + DIAL_RADIUS - 14, y + 16, 1)
+
+	# Now do the trigger
+	if trig:
+		# Draw the fire button		
+		filled_bevelled_rect(screen, x - 8, y - 2, 6, 10, 2, 1)
+	else:		
+		bevelled_rect(screen, x - 8, y - 2, 6, 10, 2, 1)	
+
+def display_paddle(screen, width, button_select, button_next,
+	x, y, name="CX30 Paddle Controller", show_dial_value = False):
 	# Allow for button release
 	time.sleep(0.25)	
 
-	p0 = Paddle(PADDLE_1_DIAL_PIN, PADDLE_1_TRIGGER_PIN)
+	p0 = Paddle(PADDLE_0_DIAL_PIN, PADDLE_0_TRIGGER_PIN)
+	p1 = Paddle(PADDLE_1_DIAL_PIN, PADDLE_1_TRIGGER_PIN)
 
-	while button.value:
-		draw_paddle_controller(screen, width, button, x, y, name)
-		draw_paddle_state(screen, x, y, p0)
+	while button_select.value:
+		draw_paddle_screen(screen, width, x, y, name)
+		draw_paddle_controller(screen, width, 12, 20, name)
+		draw_paddle_controller(screen, width, 76, 20, name)
+		draw_paddle_state(screen, 12, 20, p0, show_dial_value)
+		draw_paddle_state(screen, 76, 20, p1, show_dial_value)
 		screen.show()	
-	
+
+		# Toggle dial value display on [Next] button press
+		if not button_next.value:
+			show_dial_value = not show_dial_value
+
 	# Allow for button release
 	time.sleep(0.5)
 	screen.fill(0)		
