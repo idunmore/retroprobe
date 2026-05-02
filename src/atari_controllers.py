@@ -65,28 +65,13 @@ pin_stick_map = {"1": (sp_up, "UP", 17,5),
 
 pin_trigger_map = "000001"
 
-paddle0_max = 0
-paddle0_min = 65535
-paddle1_max = 0
-paddle1_min = 65535
-
 # Keypad/Keyboard Constants
 
 # Paddle Constants
 PADDLE_0_DIAL_PIN = 1
 PADDLE_0_TRIGGER_PIN = 3
 PADDLE_1_DIAL_PIN = 0
-PADDLE_1_TRIGGER_PIN = 4
-PADDLE_VCC_PIN = 6
-PADDLE_GND_PIN = 7
-
-paddle0_dial = db9_port_probe.analog_pins[PADDLE_0_DIAL_PIN]
-paddle1_dial = db9_port_probe.analog_pins[PADDLE_1_DIAL_PIN]
-
-# Setup a surrogate VCC pin (digital output, True, at 3.3v) to drive the pot
-vcc = db9_port_probe.pins[PADDLE_VCC_PIN]
-vcc.direction = digitalio.Direction.OUTPUT
-vcc.value = True
+PADDLE_1_TRIGGER_PIN = 2
 
 # Display offets and spacing
 KEYPAD_X_OFFSET = 40
@@ -102,33 +87,53 @@ keys = []
 
 # Paddle Class
 class Paddle:
+	'''
+	Encapsulates a single paddle controller, with a dial and trigger.
+	This simplifies handling multiple paddles simultaneously.
+	'''
 
+	# Internal Constants
 	PADDLE_LOW_VAL = 0
 	PADDLE_HIGH_VAL = 255
+	PADDLE_VCC_PIN = 6
+	PADDLE_GND_PIN = 7
+
+	# Setup a surrogate VCC pin (digital output, True, at 3.3v) to drive the pot
+	vcc = db9_port_probe.pins[self.PADDLE_VCC_PIN]
+	vcc.direction = digitalio.Direction.OUTPUT
+	vcc.value = True
+
+	# Setup a surrogate GND pin (digital output, False, at 0v) to drive the pot
+	gnd = db9_port_probe.pins[self.PADDLE_GND_PIN]
+	gnd.direction = digitalio.Direction.OUTPUT
+	gnd.value = False
 
 	def __init__(self, dial_pin, trigger_pin):
 		self._dial = db9_port_probe.analog_pins[dial_pin]
-		self._trigger = db9_port_probe.pins[trigger_pin]
-
+		self._trigger_pin = trigger_pin	
 		self._paddle_max = 0
 		self._paddle_min = 65535
 
 	@property
 	def position(self):
-		self._calc_range()
-		pos = int(adafruit_simplemath.map_range(
+		self.__calc_range()
+		return int(adafruit_simplemath.map_range(
 			self._dial.value, self._paddle_min, self._paddle_max,
-			PADDLE_LOW_VAL, PADDLE_HIGH_VAL))
+			self.PADDLE_LOW_VAL, self.PADDLE_HIGH_VAL))
 
-		return pos
+	@property
+	def trigger(self):		
+		pin = db9_port_probe.pins[self._trigger_pin]
+		pin.direction = digitalio.Direction.INPUT
+		pin.pull = digitalio.Pull.UP
+		return not pin.value		
 
 	def __calc_range(self):
-		raw_val = self._dial_value
+		raw_val = self._dial.value
 		if raw_val > self._paddle_max:
 			self._paddle_max = raw_val
 		if raw_val < self._paddle_min:
 			self._paddle_min = raw_val
-
 
 def connections_to_key(connections):
 	return ", ".join([f"{a}-{b}" for a, b in connections])
@@ -144,7 +149,7 @@ def build_keypad_maps():
 	keypad_connection_map[connections_to_key(
 		[(2, 5), (2, 7), (2, 9), (5, 7), (5, 9), (7, 9)])] = "4"
 	keypad_connection_map[connections_to_key(
-		[(2, 5), (2, 7), (2, 9), (5, 7), (7, 9), (9,5)])] = "5"
+		[(2, 5), (2, 7), (2, 9), (5, 7), (7, 9), (9, 5)])] = "5"
 	keypad_connection_map[connections_to_key(
 		[(2, 6), (5, 7), (5, 9), (7, 9)])] = "6"
 	keypad_connection_map[connections_to_key(
@@ -273,8 +278,7 @@ def display_keypad(screen, width, button, x, y, name="Atari Keypad Controller"):
 
 	# Allow for button release
 	time.sleep(0.5)
-	screen.fill(0)		
-
+	screen.fill(0)	
 
 def draw_paddle_controller(screen, width, button, x, y, name):
 	# Clear screen
@@ -284,34 +288,22 @@ def draw_paddle_controller(screen, width, button, x, y, name):
 	screen.text(name, 0, 0, 1)
 	screen.hline(0, 12, width, 1)
 	
-def draw_paddle_state(screen, x, y):
-	paddle_range = 0
-	raw = paddle0_dial.value
-	# print(f"Raw Dial Value: {raw}")
-	global paddle0_max, paddle0_min
-	if raw > paddle0_max:
-		paddle0_max = raw
-	if raw < paddle0_min:
-		paddle0_min = raw		
+def draw_paddle_state(screen, x, y, paddle):
 	
-	real = int(adafruit_simplemath.map_range(raw, paddle0_min, paddle0_max, 0, 255))
-
-	print(f"Real Dial Value: {real}") 	
+	real = paddle.position
+	trig = paddle.trigger
+	print(f"Real Dial Value: {real}, Trigger: {trig}") 	
 
 def display_paddle(screen, width, button, x, y, name="CX30 Paddle Controller"):
 	# Allow for button release
 	time.sleep(0.25)	
 
-	build_keypad_maps()	
-	
+	p0 = Paddle(PADDLE_1_DIAL_PIN, PADDLE_1_TRIGGER_PIN)
+
 	while button.value:
 		draw_paddle_controller(screen, width, button, x, y, name)
-		draw_paddle_state(screen, x, y)
-		screen.show()
-
-	global paddle_max, paddle_min
-	paddle_max = 0
-	paddle_min = 65535
+		draw_paddle_state(screen, x, y, p0)
+		screen.show()	
 	
 	# Allow for button release
 	time.sleep(0.5)
