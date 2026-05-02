@@ -34,6 +34,7 @@ mkdir -p dist/lib
 cp lib/adafruit_displayio_ssd1306.mpy dist/lib/adafruit_displayio_ssd1306.mpy
 cp lib/adafruit_framebuf.mpy dist/lib/adafruit_framebuf.mpy
 cp lib/adafruit_ssd1306.mpy dist/lib/adafruit_ssd1306.mpy
+cp lib/adafruit_simplemath.mpy dist/lib/adafruit_simplemath.mpy
 
 # Do fonts
 cp fonts/font5x8.bin dist/font5x8.bin
