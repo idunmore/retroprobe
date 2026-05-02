@@ -59,10 +59,7 @@ button_select = create_button(board.GP17)
 # Display the Boot Screen
 boot_screen.show_boot_screen(screen, SCREEN_WIDTH, button_select)
 
-# Build an example/placeholder menu for testing
-# atari_joysticks = Menu("Joysticks")
-# atari_joysticks.add(MenuItem("CX10 Joystick", launch_game("CX10")))
-# atari_joysticks.add(MenuItem("CX40 Joystick", launch_game("CX40")))
+
 
 # atari_gamepads = Menu("Gamepads")
 # atari_gamepads.add(MenuItem("CX78/CX78+ Gamepad", launch_game("CX78/CX78+")))
@@ -74,25 +71,34 @@ boot_screen.show_boot_screen(screen, SCREEN_WIDTH, button_select)
 # atari_trakballs.add(MenuItem("CX22 Trak-Ball",  launch_game("CX22")))
 # atari_trakballs.add(MenuItem("CX80 Trak-Ball", launch_game("CX80")))
 
+# Add Atari Controller Categories and Controllers to the Menu
 atari = Menu("Atari")
-atari.add(MenuItem("CX10 Joystick",
+
+atari_joysticks = Menu("Joysticks")
+atari_joysticks.add(MenuItem("CX10 Joystick",
 		lambda:atari_controllers.display_joystick(
 			screen,	SCREEN_WIDTH, button_select, 4, 21, "CX10 Joystick")))
-atari.add(MenuItem("CX40 Joystick",
+atari_joysticks.add(MenuItem("CX40 Joystick",
 		lambda:atari_controllers.display_joystick(
 			screen,	SCREEN_WIDTH, button_select, 4, 21, "CX40 Joystick")))
-atari.add(MenuItem("CX21 Video Touch Pad",
+
+atari_keypads = Menu("Keypads")
+atari_keypads.add(MenuItem("CX21 Video Touch Pad",
 		lambda:atari_controllers.display_keypad(
 			screen,	SCREEN_WIDTH, button_select, 0, 16, "CX21 Video Touch Pad")))
-atari.add(MenuItem("CX50 Keyboard",
+atari_keypads.add(MenuItem("CX50 Keyboard",
 		lambda:atari_controllers.display_keypad(
 			screen,	SCREEN_WIDTH, button_select, 0, 16, "CX50 Keyboard")))
 
-#atari.add(MenuItem("Atari 2600",   launch_game("Atari 2600")))
-#atari.add(MenuItem("Atari 5200",   launch_game("Atari 5200")))
-# atari.add(atari_joysticks)
+atari_paddles = Menu("Paddles")
+atari_paddles.add(MenuItem("CX30 Paddle",
+		lambda:atari_controllers.display_paddle(
+			screen,	SCREEN_WIDTH, button_select, 0, 16, "CX30 Paddle")))
+
+atari.add(atari_joysticks)
+atari.add(atari_keypads)
+atari.add(atari_paddles)
 # atari.add(atari_gamepads)
-# atari.add(atari_paddles)
 # atari.add(atari_trakballs)
 
 intellivision = Menu("Intellivision")

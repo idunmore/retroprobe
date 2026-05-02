@@ -23,6 +23,12 @@ import sprites
 import shared_sprites
 from drawing_primitives import filled_circle, bevelled_rect, filled_bevelled_rect
 
+# Circuit Python & Adafruit Modules
+import board
+import analogio
+import digitalio
+import adafruit_simplemath
+
 # Sprites
 sp_up = sprites.Sprite(shared_sprites.dir_up, 8,4)
 sp_down = sprites.Sprite(shared_sprites.dir_down, 8,4)
@@ -59,7 +65,28 @@ pin_stick_map = {"1": (sp_up, "UP", 17,5),
 
 pin_trigger_map = "000001"
 
+paddle0_max = 0
+paddle0_min = 65535
+paddle1_max = 0
+paddle1_min = 65535
+
 # Keypad/Keyboard Constants
+
+# Paddle Constants
+PADDLE_0_DIAL_PIN = 1
+PADDLE_0_TRIGGER_PIN = 3
+PADDLE_1_DIAL_PIN = 0
+PADDLE_1_TRIGGER_PIN = 4
+PADDLE_VCC_PIN = 6
+PADDLE_GND_PIN = 7
+
+paddle0_dial = db9_port_probe.analog_pins[PADDLE_0_DIAL_PIN]
+paddle1_dial = db9_port_probe.analog_pins[PADDLE_1_DIAL_PIN]
+
+# Setup a surrogate VCC pin (digital output, True, at 3.3v) to drive the pot
+vcc = db9_port_probe.pins[PADDLE_VCC_PIN]
+vcc.direction = digitalio.Direction.OUTPUT
+vcc.value = True
 
 # Display offets and spacing
 KEYPAD_X_OFFSET = 40
@@ -73,32 +100,63 @@ keypad_connection_map = OrderedDict()
 key_labels = []
 keys = []
 
+# Paddle Class
+class Paddle:
+
+	PADDLE_LOW_VAL = 0
+	PADDLE_HIGH_VAL = 255
+
+	def __init__(self, dial_pin, trigger_pin):
+		self._dial = db9_port_probe.analog_pins[dial_pin]
+		self._trigger = db9_port_probe.pins[trigger_pin]
+
+		self._paddle_max = 0
+		self._paddle_min = 65535
+
+	@property
+	def position(self):
+		self._calc_range()
+		pos = int(adafruit_simplemath.map_range(
+			self._dial.value, self._paddle_min, self._paddle_max,
+			PADDLE_LOW_VAL, PADDLE_HIGH_VAL))
+
+		return pos
+
+	def __calc_range(self):
+		raw_val = self._dial_value
+		if raw_val > self._paddle_max:
+			self._paddle_max = raw_val
+		if raw_val < self._paddle_min:
+			self._paddle_min = raw_val
+
+
 def connections_to_key(connections):
 	return ", ".join([f"{a}-{b}" for a, b in connections])
 
 def build_keypad_maps():
 	# Connection Dictionary w/ labels for CX21, CX50 (etc.)		
 	keypad_connection_map[connections_to_key(
-		[(1, 5), (1, 7), (1, 9), (5, 7), (5, 9), (7,9)])] = "1"
+		[(1, 5), (1, 7), (1, 9), (5, 7), (5, 9), (7, 9)])] = "1"
 	keypad_connection_map[connections_to_key(
-		[(1, 5), (1, 7), (1, 9), (5, 7), (7, 9), (9,5)])] = "2"
+		[(1, 5), (1, 7), (1, 9), (5, 7), (7, 9), (9, 5)])] = "2"
 	keypad_connection_map[connections_to_key(
 		[(1, 6), (5, 7), (5, 9), (7, 9)])] = "3"
 	keypad_connection_map[connections_to_key(
-		[(2, 5), (2, 7), (2, 9), (5, 7), (5, 9), (7,9)])] = "4"
+		[(2, 5), (2, 7), (2, 9), (5, 7), (5, 9), (7, 9)])] = "4"
 	keypad_connection_map[connections_to_key(
 		[(2, 5), (2, 7), (2, 9), (5, 7), (7, 9), (9,5)])] = "5"
-	keypad_connection_map[connections_to_key([(2, 6), (5, 7), (5, 9), (7, 9)])] = "6"
 	keypad_connection_map[connections_to_key(
-		[(3, 5), (3, 7), (3, 9), (5, 7), (5, 9), (7,9)])] = "7"
+		[(2, 6), (5, 7), (5, 9), (7, 9)])] = "6"
 	keypad_connection_map[connections_to_key(
-		[(3, 5), (3, 7), (3, 9), (5, 7), (7, 9), (9,5)])] = "8"
+		[(3, 5), (3, 7), (3, 9), (5, 7), (5, 9), (7, 9)])] = "7"
+	keypad_connection_map[connections_to_key(
+		[(3, 5), (3, 7), (3, 9), (5, 7), (7, 9), (9, 5)])] = "8"
 	keypad_connection_map[connections_to_key(
 		[(3, 6), (5, 7), (5, 9), (7, 9)])] = "9"
 	keypad_connection_map[connections_to_key(
-		[(4, 5), (4, 7), (4, 9), (5, 7), (5, 9), (7,9)])] = "*"
+		[(4, 5), (4, 7), (4, 9), (5, 7), (5, 9), (7, 9)])] = "*"
 	keypad_connection_map[connections_to_key(
-		[(4, 5), (4, 7), (4, 9), (5, 7), (7, 9), (9,5)])] = "0"
+		[(4, 5), (4, 7), (4, 9), (5, 7), (7, 9), (9, 5)])] = "0"
 	keypad_connection_map[connections_to_key(
 		[(4, 6), (5, 7), (5, 9), (7, 9)])] = "#"
 	keypad_connection_map[connections_to_key(
@@ -213,6 +271,48 @@ def display_keypad(screen, width, button, x, y, name="Atari Keypad Controller"):
 		draw_keypad_state(screen, x, y)
 		screen.show()
 
+	# Allow for button release
+	time.sleep(0.5)
+	screen.fill(0)		
+
+
+def draw_paddle_controller(screen, width, button, x, y, name):
+	# Clear screen
+	screen.fill(0)
+
+	# Display the title
+	screen.text(name, 0, 0, 1)
+	screen.hline(0, 12, width, 1)
+	
+def draw_paddle_state(screen, x, y):
+	paddle_range = 0
+	raw = paddle0_dial.value
+	# print(f"Raw Dial Value: {raw}")
+	global paddle0_max, paddle0_min
+	if raw > paddle0_max:
+		paddle0_max = raw
+	if raw < paddle0_min:
+		paddle0_min = raw		
+	
+	real = int(adafruit_simplemath.map_range(raw, paddle0_min, paddle0_max, 0, 255))
+
+	print(f"Real Dial Value: {real}") 	
+
+def display_paddle(screen, width, button, x, y, name="CX30 Paddle Controller"):
+	# Allow for button release
+	time.sleep(0.25)	
+
+	build_keypad_maps()	
+	
+	while button.value:
+		draw_paddle_controller(screen, width, button, x, y, name)
+		draw_paddle_state(screen, x, y)
+		screen.show()
+
+	global paddle_max, paddle_min
+	paddle_max = 0
+	paddle_min = 65535
+	
 	# Allow for button release
 	time.sleep(0.5)
 	screen.fill(0)		
