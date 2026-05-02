@@ -13,6 +13,7 @@
 import board
 import busio
 import digitalio
+import analogio
 
 # Constants
 NUM_PINS = 9
@@ -31,6 +32,10 @@ db9_pins = [board.GP0, board.GP1, board.GP2, board.GP3, board.GP4,
 
 # Create digital IO pin objects for db9 pins
 pins = [digitalio.DigitalInOut(pin) for pin in db9_pins]
+
+# Create analog IO pin objects
+db9_analog_pins = [board.A0, board.A1]
+analog_pins = [analogio.AnalogIn(pin) for pin in db9_analog_pins]
 
 def probe_connections():
 	'''
