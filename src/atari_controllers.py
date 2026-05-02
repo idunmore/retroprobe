@@ -345,15 +345,15 @@ def display_paddle(screen, width, button_select, button_next,
 	# Allow for button release
 	time.sleep(0.25)	
 
-	p0 = Paddle(PADDLE_0_DIAL_PIN, PADDLE_0_TRIGGER_PIN)
-	p1 = Paddle(PADDLE_1_DIAL_PIN, PADDLE_1_TRIGGER_PIN)
+	paddle_0 = Paddle(PADDLE_0_DIAL_PIN, PADDLE_0_TRIGGER_PIN)
+	paddle_1 = Paddle(PADDLE_1_DIAL_PIN, PADDLE_1_TRIGGER_PIN)
 
 	while button_select.value:
 		draw_paddle_screen(screen, width, x, y, name)
 		draw_paddle_controller(screen, width, 12, 20, name)
-		draw_paddle_controller(screen, width, 76, 20, name)
-		draw_paddle_state(screen, 12, 20, p0, show_dial_value)
-		draw_paddle_state(screen, 76, 20, p1, show_dial_value)
+		draw_paddle_controller(screen, width, 80, 20, name)
+		draw_paddle_state(screen, 12, 20, paddle_0, show_dial_value)
+		draw_paddle_state(screen, 80, 20, paddle_1, show_dial_value)
 		screen.show()	
 
 		# Toggle dial value display on [Next] button press
