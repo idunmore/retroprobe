@@ -105,22 +105,11 @@ class Paddle:
 	PADDLE_HIGH_VAL = 255
 	PADDLE_VCC_PIN = 6
 	PADDLE_GND_PIN = 7
-
-	# Setup a surrogate VCC pin (digital output, True, at 3.3v) to drive the pot
-	vcc = db9_port_probe.pins[PADDLE_VCC_PIN]
-	vcc.direction = digitalio.Direction.OUTPUT
-	vcc.value = True
-
-	# Setup a surrogate GND pin (digital output, False, at 0v) to drive the pot
-	gnd = db9_port_probe.pins[PADDLE_GND_PIN]
-	gnd.direction = digitalio.Direction.OUTPUT
-	gnd.value = False
-
+	
 	def __init__(self, dial_pin, trigger_pin):
 		self._dial = db9_port_probe.analog_pins[dial_pin]
-		self._trigger_pin = trigger_pin	
-		self._paddle_max = 0
-		self._paddle_min = 65535
+		self._trigger_pin = trigger_pin
+		self.reset()		
 
 	@property
 	def position(self):
@@ -142,6 +131,24 @@ class Paddle:
 			self._paddle_max = raw_val
 		if raw_val < self._paddle_min:
 			self._paddle_min = raw_val
+
+	def reset(self):
+		'''
+		Resets the paddle's dial range values, and its virtual VCC/GND pins,
+		both for intial use (during construction) and for optional reset
+		while being actively used.
+		'''
+		# Setup surrogate/virtual VCC for the paddles dial ...
+		self.vcc = db9_port_probe.pins[self.PADDLE_VCC_PIN]
+		self.vcc.direction = digitalio.Direction.OUTPUT
+		self.vcc.value = True
+		# ... and a surrogate/virtual GND ...
+		self.gnd = db9_port_probe.pins[self.PADDLE_GND_PIN]
+		self.gnd.direction = digitalio.Direction.OUTPUT
+		self.gnd.value = False
+		# ... and finally reset the dial's range values
+		self._paddle_max = 0
+		self._paddle_min = 65535
 
 def connections_to_key(connections):
 	return ", ".join([f"{a}-{b}" for a, b in connections])
@@ -343,8 +350,10 @@ def draw_paddle_state(screen, x, y, paddle, show_dial_value = False):
 def display_paddle(screen, width, button_select, button_next,
 	x, y, name="CX30 Paddle Controller", show_dial_value = False):
 	# Allow for button release
-	time.sleep(0.25)	
-
+	time.sleep(0.25)
+	# Reset GPIO pin states in case other controller types have been used
+	# and thier remnant-settings interfere with the paddle's dial reading	
+	db9_port_probe.reset_gpio()
 	paddle_0 = Paddle(PADDLE_0_DIAL_PIN, PADDLE_0_TRIGGER_PIN)
 	paddle_1 = Paddle(PADDLE_1_DIAL_PIN, PADDLE_1_TRIGGER_PIN)
 
