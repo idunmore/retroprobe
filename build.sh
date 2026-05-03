@@ -42,14 +42,14 @@ cp fonts/font5x8.bin dist/font5x8.bin
 # Do code
 cp src/code.py dist/code.py
 mpy-cross src/retroprobe.py -o dist/retroprobe.mpy
-mpy-cross src/boot_screen.py -o dist/boot_screen.mpy
-mpy-cross src/info_screen.py -o dist/info_screen.mpy
-mpy-cross src/menu.py -o dist/menu.mpy
-mpy-cross src/sprites.py -o dist/sprites.mpy
-mpy-cross src/db9_port_probe.py -o dist/db9_port_probe.mpy
-mpy-cross src/db9_display.py -o dist/db9_display.mpy
-mpy-cross src/drawing_primitives.py -o dist/drawing_primitives.mpy
-mpy-cross src/shared_sprites.py -o dist/shared_sprites.mpy
-mpy-cross src/atari_controllers.py -o dist/atari_controllers.mpy
-mpy-cross src/intv_controllers.py -o dist/intv_controllers.mpy
+mpy-cross src/boot_screen.py -o dist/lib/boot_screen.mpy
+mpy-cross src/info_screen.py -o dist/lib/info_screen.mpy
+mpy-cross src/menu.py -o dist/lib/menu.mpy
+mpy-cross src/sprites.py -o dist/lib/sprites.mpy
+mpy-cross src/db9_port_probe.py -o dist/lib/db9_port_probe.mpy
+mpy-cross src/db9_display.py -o dist/lib/db9_display.mpy
+mpy-cross src/drawing_primitives.py -o dist/lib/drawing_primitives.mpy
+mpy-cross src/shared_sprites.py -o dist/lib/shared_sprites.mpy
+mpy-cross src/atari_controllers.py -o dist/lib/atari_controllers.mpy
+mpy-cross src/intv_controllers.py -o dist/lib/intv_controllers.mpy
 exit
