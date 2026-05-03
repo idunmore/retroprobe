@@ -37,6 +37,19 @@ pins = [digitalio.DigitalInOut(pin) for pin in db9_pins]
 db9_analog_pins = [board.A0, board.A1]
 analog_pins = [analogio.AnalogIn(pin) for pin in db9_analog_pins]
 
+def reset_gpio():
+	'''Resets GPIO pins to prevent config mismatches between controller types'''
+	for pin in pins:
+	 	pin.direction = digitalio.Direction.INPUT
+	 	pin.pull = None
+
+	# Turn off analog pins ...
+	global analog_pins
+	for analog_pin in analog_pins:
+	  	analog_pin.deinit()	
+	# ... then re-create and initalize them for input	
+	analog_pins = [analogio.AnalogIn(pin) for pin in db9_analog_pins]
+
 def probe_connections():
 	'''
 	Tests all pins in the pins[] array for connections to all other pins
