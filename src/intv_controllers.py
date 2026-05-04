@@ -108,25 +108,25 @@ def draw_action_buttons(screen, x, y, pin_states):
 def draw_keypad(screen, x, y, pin_states):
 	for j in range(4):
 		for i in range(3):
+			index = (j * 3) + i
+			key_pressed = False
 			if db9_port_probe.are_pins_set(
 				pin_keypad_map[(j * 3) + i], pin_states):
 				# Draw the activated key (filled key, black text)
 				filled_bevelled_rect(screen,
 					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING),
 					y + (j * KEYPAD_Y_SPACING), KEY_WIDTH, KEY_HEIGHT, 2, 1)
-				
-				screen.text(key_label[(j * 3) + i], 
-					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING) + 3,
-					y + (j * KEYPAD_Y_SPACING) + 2, 0)
+				key_pressed = True				
 			else:
 				# Draw the deactivated key (black key, white text)
 				bevelled_rect(screen,
 					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING),
 					y + (j * KEYPAD_Y_SPACING), KEY_WIDTH, KEY_HEIGHT, 2, 1)
 				
-				screen.text(key_label[(j * 3) + i],
-					x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING) + 3,
-					y + (j * KEYPAD_Y_SPACING) + 2, 1)
+			screen.text(key_label[(j * 3) + i],
+				x + KEYPAD_X_OFFSET + (i * KEYPAD_X_SPACING) + 3,
+				y + (j * KEYPAD_Y_SPACING) + 2,
+				1 if not key_pressed else 0)
 
 def draw_disc(screen, x, y, pin_states):
 	for pin_state, disc_info in pin_disc_map.items():		
