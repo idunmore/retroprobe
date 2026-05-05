@@ -55,12 +55,12 @@ def show_boot_screen(screen, width, button):
 		for x in range(7):
 			if i % 2 == 0:
 				spr_squid_open.render(screen, x * 16 + i, 25)
-				spr_crab_open.render(screen, x * 16 + 1 + i, 35)
-				spr_jelly_open.render(screen, x * 16 + 2 + i, 45)
+				spr_crab_open.render(screen, x * 16 + i, 35)
+				spr_jelly_open.render(screen, x * 16 + i, 45)
 			else:
 				spr_squid_closed.render(screen, x * 16 + i, 25)
-				spr_crab_closed.render(screen, x * 16 + 1 + i, 35)
-				spr_jelly_closed.render(screen, x * 16 + 2 + i, 45)
+				spr_crab_closed.render(screen, x * 16 + i, 35)
+				spr_jelly_closed.render(screen, x * 16 + 1 + i, 45)
 
 			if not button.value:
 				exit = True
@@ -69,25 +69,3 @@ def show_boot_screen(screen, width, button):
 		screen.show()
 		if not button.value or exit:
 			break
-
-# Boot Screen Display (Placeholder)
-# def show_boot_screen(screen, width, button):
-# 	for i in range(10):	    
-# 		screen.fill(0)
-
-# 		# Display the title
-# 		screen.text("RetroProbe by @Torq", 0, 0, 1)
-# 		screen.hline(0, 12, width, 1)
-
-# 		# Draw random bits to simulate "booting"
-# 		for line in range(5):
-# 			bits = [random.randint(0, 1) for _ in range(21)]
-# 			bit_string = ''.join(map(str, bits))
-# 			screen.text(bit_string, 0, 16 + line * 10, 1)
-		
-# 		screen.show()
-
-# 		# Allow button to exit the boot screen early
-# 		if not button.value:
-# 			break
-		
