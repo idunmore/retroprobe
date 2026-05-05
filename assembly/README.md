@@ -8,7 +8,7 @@ Connections between the primary components are as follows:
 
 Where **two** connections are indicated in the "Pi Pico" column, those two pins (or the pin and ground) should be connected.  For example, DB9 Pin 1 is connected to GPIO pin 4 (GP4) and in turn to GPIO pin 27 (aka A1).
 
-Connections to the MALE DE9 connector assume pin assignments are depicted below; for convince both front and rear (solder-side) PIN numbers are illustrated:
+Connections to the MALE DE9 connector assume pin assignments as depicted below; for convenience both front and rear (solder-side) PIN numbers are illustrated:
 
 ![RetroProbe](DE9_connections.png)
 
