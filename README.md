@@ -1,6 +1,6 @@
 # RetroProbe - Retro Controller Tester
 
-[![Static Badge](https://img.shields.io/badge/circuit_python-10.2-purple?link=https%3A%2F%2Fcircuitpython.org)](https://circuitpython.org)&nbsp;[![Static Badge](https://img.shields.io/badge/pico-pi?style=flat&logo=raspberrypi&label=Raspberry%20Pi&color=%23A22846&link=https://www.raspberrypi.com/products/raspberry-pi-pico/)](https://www.raspberrypi.com/products/raspberry-pi-pico/)&nbsp;[![GitHub License](https://img.shields.io/github/license/idunmore/retroprobe?color=green)](https://github.com/idunmore/retroprobe/blob/master/LICENSE)
+[![Static Badge](https://img.shields.io/badge/circuit_python-10.2-purple?link=https%3A%2F%2Fcircuitpython.org)](https://circuitpython.org)&nbsp;[![Static Badge](https://img.shields.io/badge/pico-pi?style=flat&logo=raspberrypi&label=Raspberry%20Pi&color=%23A22846&link=https://www.raspberrypi.com/products/raspberry-pi-pico/)](https://www.raspberrypi.com/products/raspberry-pi-pico/)&nbsp;[![GitHub License](https://img.shields.io/github/license/idunmore/RetroProbe)](https://github.com/idunmore/retroprobe/blob/master/LICENSE)
 
 ![RetroProbe](assembly/banner.png)
 
