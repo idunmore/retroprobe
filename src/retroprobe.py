@@ -44,8 +44,8 @@ def create_button(gpio_pin):
 	button.pull = digitalio.Pull.UP
 	return button
 
-# Placeholder Functions
-def launch_game(name):
+# Test/Debug Menu-Launch Function
+def launch_controller(name):
     return lambda: print(f"Launching {name}...")
 
 # Initialize Screen
