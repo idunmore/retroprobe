@@ -17,11 +17,34 @@ RetroProbe is built on a Raspberry Pi Pico, driving a 0.96" 1-bit color OLED 128
 
 This runs [Adafruit](https://www.adafruit.com)'s [Circuit Python](https://github.com/adafruit/circuitpython) (a modified form of Micro Python).
 
-### Assembly
-Assembly instructions will follow, and will be in the "assembly" folder.  This can be built on a prototyping/breadboard without any soldering with inexpensive parts easily available from multiple sources (including Amazon).
+## Assembly
+Assembly instructions can be found in the "assembly" folder.  This can be built on a prototyping/breadboard without any soldering with inexpensive parts easily available from multiple sources (including Amazon).
+
+## Building & Installing from Source
+Building from Source is extremely easy.
+
+First, install [mpy-cross](https://adafruit-circuit-python.s3.amazonaws.com/index.html?prefix=bin/mpy-cross/), which the build script will use to compile the source `.py` files and put them in a smaller, faster to invoke, format (`.mpy`).  You MUST use the version of [mpy-cross for Circuit Python](https://adafruit-circuit-python.s3.amazonaws.com/index.html?prefix=bin/mpy-cross/).
+
+ 1. Clone this respository
+ 2. Open a terminal/launch a shell, and navigate to the repository's root folder
+ 3. Make build.sh executable, by executing: `chmod +x build.sh`
+ 4. Run: `./build.sh clean`
+ 
+ *Your dist/ folder now contains all of the files and libraries required for RetroProbe.*
+
+### Installing Source-Built Files
+First, you need to prepare your Pi Pico with an appropriate version of Circuit Python.  Downloads, by board, can be found [here](https://circuitpython.org/downloads), along with instructions for flashing them onto your Pi Pico.
+
+Once that is done:
+
+ 1. Connect your Pi Pico to your computer and wait for its flash drive to mount
+ 2. Copy the contents of your RetroProbe dist/ folder, including all sub-folders, to the root folder on your Pi Pico "drive"
+ 3. Eject the Pi Pico from your computer
+
+*RetroProbe should launch, with its animated boot screen.*
 
 
-### Installation
+### Installation Pre-Built Images
 A ready-to-run flash image (.UF2) is provided under "[Releases](https://github.com/idunmore/retroprobe/releases)".  Use the .zip file indicated for your specific version of the Pi Pico (or clone).
 
  - While holding down the "BOOTSEL" button, connect your Raspberry Pi Pico (or clone) to your computer via a USB cable.
@@ -36,4 +59,3 @@ A ready-to-run flash image (.UF2) is provided under "[Releases](https://github.c
 
 *RetroProbe is now ready to use.*
 
- 
