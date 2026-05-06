@@ -7,22 +7,20 @@
 # Built On:
 #
 # Adafruit CircuitPython 10.1.4 on 2026-03-09; Raspberry Pi Pico with rp2040
-# (w/ 16MB flash memory)
 
 # Standard Modules
 import sys
 import time
 
+# Retroprobe Modules
+from common_display import clear_screen, clear_and_show_title
+
 # Info Screen Display
 def show_info_screen(screen, width, button):	
-	screen.fill(0)
-
-	# Display the title
-	screen.text("RetroProbe Info", 0, 0, 1)
-	screen.hline(0, 12, width, 1)
+	clear_and_show_title(screen, "RetroProbe Info", width)
 
 	# Retroprobe version
-	screen.text("v.0.0.5a/2026-05-03", 0, 16, 1)
+	screen.text("v.0.0.6a/2026-05-03", 0, 16, 1)
 
 	# Python (Micro Python) and Circuit Python versions
 	ver = sys.version
@@ -41,4 +39,4 @@ def show_info_screen(screen, width, button):
 
 	# Allow for button release
 	time.sleep(0.5)
-	screen.fill(0)
+	clear_screen(screen)

@@ -6,8 +6,7 @@
 
 # Built On:
 #
-# Adafruit CircuitPython 10.1.4 on 2026-03-09; Raspberry Pi Pico with rp2040
-# (w/ 16MB flash memory)
+# Adafruit CircuitPython 10.2.0 on 2026-04-20; Raspberry Pi Pico with rp2040
 
 # atari_controllers.py
 #
@@ -23,6 +22,7 @@ import db9_port_probe
 import sprites
 import shared_sprites
 from drawing_primitives import *
+from common_display import clear_screen, clear_and_show_title
 
 # Circuit Python & Adafruit Modules
 import board
@@ -190,13 +190,8 @@ def build_keypad_maps():
 	keys.extend([k for k in keypad_connection_map.keys()])
 
 def draw_joystick_controller(screen, width, button, x, y, name):
-	# Clear screen
-	screen.fill(0)
-
-	# Display the title
-	screen.text(name, 0, 0, 1)
-	screen.hline(0, 12, width, 1)
-
+	clear_and_show_title(screen, name, width)
+	
 	# Draw the stick outline
 	bevelled_rect(screen, x, y, I_WIDTH, I_HEIGHT, 3, 1)
 	
@@ -240,15 +235,11 @@ def display_joystick(screen, width, button, x, y, name="CX40 Joystick"):
 
 	# Allow for button release
 	time.sleep(0.5)
-	screen.fill(0)
+	clear_screen(screen)
 
 def draw_keypad_controller(screen, width, button, x, y, name):
-	# Clear the screen
-	screen.fill(0)
-
-	# Display the title
-	screen.text(name, 0, 0, 1)
-	screen.hline(0, 12, width, 1)
+	clear_and_show_title(screen, name, width)	
+	
 	screen.vline(KEYPAD_X_OFFSET - 7, 20, 40, 1)
 	screen.vline(KEYPAD_X_OFFSET + (3 * KEYPAD_X_SPACING) + 4, 20, 40, 1)
 	
@@ -293,17 +284,14 @@ def display_keypad(screen, width, button, x, y, name="Atari Keypad Controller"):
 
 	# Allow for button release
 	time.sleep(0.5)
-	screen.fill(0)	
+	clear_screen(screen)
 
 # Paddle Display
 
-def draw_paddle_screen(screen, width, x, y, name):
-	# Clear the screen
-	screen.fill(0)
-	# Display the title
-	screen.text(name, 0, 0, 1)
-	screen.hline(0, 12, width, 1)
-	# Verticl Separator
+def draw_paddle_screen(screen, width, x, y, name):	
+	clear_and_show_title(screen, name, width)
+
+	# Vertical Separator
 	screen.vline(width // 2, 22, 36, 1)
 
 def draw_paddle_controller(screen, width, x, y, name):
@@ -371,4 +359,4 @@ def display_paddle(screen, width, button_select, button_next,
 
 	# Allow for button release
 	time.sleep(0.5)
-	screen.fill(0)		
+	clear_screen(screen)

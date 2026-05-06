@@ -42,6 +42,7 @@ cp fonts/font5x8.bin dist/font5x8.bin
 # Do code
 cp src/code.py dist/code.py
 mpy-cross src/retroprobe.py -o dist/retroprobe.mpy
+mpy-cross src/common_display.py -o dist/lib/common_display.mpy
 mpy-cross src/boot_screen.py -o dist/lib/boot_screen.mpy
 mpy-cross src/info_screen.py -o dist/lib/info_screen.mpy
 mpy-cross src/menu.py -o dist/lib/menu.mpy

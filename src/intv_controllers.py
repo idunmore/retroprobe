@@ -6,8 +6,7 @@
 
 # Built On:
 #
-# Adafruit CircuitPython 10.1.4 on 2026-03-09; Raspberry Pi Pico with rp2040
-# (w/ 16MB flash memory)
+# Adafruit CircuitPython 10.2.0 on 2026-04-20; Raspberry Pi Pico with rp2040
 
 # intv_controllers.py
 #
@@ -19,6 +18,7 @@ import time
 # Retroprobe Modules
 import db9_port_probe
 from drawing_primitives import *
+from common_display import clear_screen, clear_and_show_title
 
 # Constants
 
@@ -70,12 +70,7 @@ pin_disc_map = {"010000000" : (90, 8, "N"),
 				"100100000" : (78, 34, "SW")}
 
 def draw_controller(screen, width, x, y, name):
-	# Clear screen
-	screen.fill(0)
-
-	# Display the title
-	screen.text(f"{name}", 0, 0, 1)
-	screen.hline(0, 12, width, 1)	
+	clear_and_show_title(screen, name, width)
 
 	# Verticl Separator
 	screen.vline(width // 2, 22, 36, 1)
@@ -157,5 +152,5 @@ def display_intv(screen, width, button, x, y, name = "Intellivision"):
 		screen.show()
 
 	# Allow for button release
-	time.sleep(0.5)
-	screen.fill(0)
+	time.sleep(0.5)	
+	clear_screen(screen)

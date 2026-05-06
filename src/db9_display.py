@@ -6,8 +6,7 @@
 
 # Built On:
 #
-# Adafruit CircuitPython 10.1.4 on 2026-03-09; Raspberry Pi Pico with rp2040
-# (w/ 16MB flash memory)
+# Adafruit CircuitPython 10.2.0 on 2026-04-20; Raspberry Pi Pico with rp2040
 
 # Standard Modules
 import time
@@ -15,6 +14,7 @@ import time
 # Retroprobe Modules
 from drawing_primitives import filled_circle
 import db9_port_probe
+from common_display import clear_screen, clear_and_show_title
 
 # Constants
 PIN_RADIUS = 7
@@ -36,11 +36,7 @@ def show_connections_flag(screen, enabled):
 def draw_port(screen, connections, detected_pins, pin_states,
 			  show_connections = False):
 	'''Draws a DB9 port, showing pins and connection state'''
-	screen.fill(0)
-
-	# Title
-	screen.text("Male DB9 - Front View", 0, 0, 1)
-	screen.hline(0,12,128,1)
+	clear_and_show_title(screen, "Male DB9 - Front View", 128)
 
 	# Draw the port outline	
 	screen.hline(10,16,108,1)
@@ -62,8 +58,6 @@ def draw_port(screen, connections, detected_pins, pin_states,
 	if show_connections:
 		show_connections_flag(screen, show_connections)
 		draw_connections(screen, connections)
-	
-	screen.show()
 
 def draw_connections(screen, connections):
 	'''Draws the connections between shorted pins'''
@@ -89,6 +83,7 @@ def display_raw_db9(screen, width, select_button, next_button,
 	while True:
 		connections, detected_pins, pin_states = db9_port_probe.probe_connections()
 		draw_port(screen, connections, detected_pins, pin_states, show_connections)
+		screen.show()
 		time.sleep(0.05)
 
 		# Toggle connection lines on/off when [Next] is pressed ... 
@@ -98,3 +93,7 @@ def display_raw_db9(screen, width, select_button, next_button,
 		# Exit this display when [Select] is pressed
 		if not select_button.value:
 			break
+
+	# Allow for button release
+	time.sleep(0.5)
+	clear_screen(screen)
