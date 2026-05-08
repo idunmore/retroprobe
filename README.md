@@ -44,7 +44,7 @@ Once that is done:
 *RetroProbe should launch, with its animated boot screen.*
 
 
-### Installating Pre-Built Images
+### Installing Pre-Built Images
 A ready-to-run flash image (.UF2) is provided under "[Releases](https://github.com/idunmore/retroprobe/releases)".  Use the .zip file indicated for your specific version of the Pi Pico (or clone).
 
  - While holding down the "BOOTSEL" button, connect your Raspberry Pi Pico (or clone) to your computer via a USB cable.
